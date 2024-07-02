@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/UserProfile';
+import AnotherProfile from './pages/AnotherProfile';
 
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 // page for user profile
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/profile/:id" element={<AnotherProfile />} />
             </Routes>
         </BrowserRouter>
     );

@@ -57,3 +57,13 @@ body {
 .doing-stuff button:hover {
     background-color: #04AA6D;
 }
+.portfolio-stat {
+    padding: 1rem;
+    background-color: #809A91;
+    border: 0;
+}
+.portfolio-stat:hover {
+    background-color: #1E5945;
+    color: white;
+    cursor: pointer;
+}
