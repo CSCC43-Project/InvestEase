@@ -2,7 +2,7 @@ import Header from '../components/Header';
 import FriendList from '../components/FriendList/FriendList';
 import '../components/User.css';
 
-export default function Home() {
+export default function UserProfile() {
     return (
         <div>
             <Header />
