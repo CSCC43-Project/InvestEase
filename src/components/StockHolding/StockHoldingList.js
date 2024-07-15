@@ -1,6 +1,7 @@
 import './StockHoldingList.css';
 import StockHolding from './StockHolding';
-export default function Table() {
+
+export default function StockHoldingList({ updateCashAccount }) {
     return (
     <table>
         <thead>
@@ -15,12 +16,12 @@ export default function Table() {
             </tr>
         </thead>
         <tbody className='stocks'>
-            <StockHolding />
-            <StockHolding />
-            <StockHolding />
-            <StockHolding />
-            <StockHolding />
-            <StockHolding />
+            <StockHolding updateCashAccount={updateCashAccount}/>
+            <StockHolding updateCashAccount={updateCashAccount}/>
+            <StockHolding updateCashAccount={updateCashAccount}/>
+            <StockHolding updateCashAccount={updateCashAccount}/>
+            <StockHolding updateCashAccount={updateCashAccount}/>
+            <StockHolding updateCashAccount={updateCashAccount}/>
         </tbody>
     </table>
     );
