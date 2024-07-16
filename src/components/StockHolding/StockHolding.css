@@ -1,0 +1,64 @@
+.stock-header {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #1E5945;
+    padding-inline: 1rem;
+}
+
+.holding-info {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 1rem;
+}
+
+.buy {
+    transition-duration: 0.4s;
+        background-color: transparent;
+        border: 2px solid #04AA6D;
+        border-radius: 50%;
+        color: black;
+}
+
+.buy:hover {
+    background-color: #04AA6D;
+    color: black;
+}
+
+.sell {
+    transition-duration: 0.4s;
+    background-color: transparent;
+    border: 2px solid #f44336;
+    border-radius: 50%;
+    color: black;
+}
+
+.sell:hover {
+    background-color: #f44336;
+    color: black;
+}
+
+.confirm {
+    background-color: #04AA6D;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.confirm:hover {
+    background-color: #1E5945;
+}
+
+.reject {
+    background-color: #f44336;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.reject:hover {
+    background-color: #9f2017;
+}
