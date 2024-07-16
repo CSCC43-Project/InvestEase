@@ -13,7 +13,7 @@ export default function SinglePortfolio() {
 
     return (
         <div>
-            <Header />
+            <Header profile={true} />
             <div className='portfolio' style={{ color: 'white', padding: 5 }}>
                 <div className='full-p-info'>
                     <div className='portfolio-info'

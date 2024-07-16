@@ -5,7 +5,7 @@ import StockList from '../components/StockList/StockList';
 export default function AnotherProfile() {
     return (
         <div>
-            <Header />
+            <Header profile={true}/>
             <div className='user'>
                 <img className="profilepic" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png"></img>
                 <div className='user-info'>
