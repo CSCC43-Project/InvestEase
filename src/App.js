@@ -6,7 +6,6 @@ import Profile from './pages/UserProfile';
 import AnotherProfile from './pages/AnotherProfile';
 import SinglePortfolio from './pages/SinglePortfolio';
 import Stocks from './pages/FullStocks';
-import Portfolios from './pages/Portfolios';
 
 
 export default function App() {
@@ -21,7 +20,6 @@ export default function App() {
                 // page for user profile
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/profile/:id" element={<AnotherProfile />} />
-                <Route path='/portfolios/:userid' element={<Portfolios />} />
                 <Route path="/portfolio/:id" element={<SinglePortfolio />} />
                 <Route path="/stocks" element={<Stocks/>} />
                 <Route path="*" element={<h1>Not Found</h1>} />
