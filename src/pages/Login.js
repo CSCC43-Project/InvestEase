@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link} from "react-router-dom";
 import "../components/LoginRegister.css"
 import { useState } from "react";
 
@@ -52,6 +52,9 @@ export default function Login() {
                             onChange={(event) => inputChange('password', event.target.value)}>
                         </input>
                     </div>
+                    <p>
+                        Don't have an account? <Link to='/register'>Sign up</Link>
+                    </p>
                     <p>
                         <button type="submit" className="form-submit">Sign In</button>
                     </p>

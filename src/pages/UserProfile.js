@@ -13,6 +13,7 @@ export default function Home() {
                     <div className='extra-info'>
                         <p>City, Province</p>
                         <p>Job/Profession</p>
+                        <p># followers</p>
                     </div>
                 </div>
             </div>

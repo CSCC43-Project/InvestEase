@@ -8,6 +8,15 @@
     align-items: center;
 }
 
+.friendslist {
+    flex-direction: column;
+    display: flex;
+}
+
+.profile {
+    flex-direction: column;
+}
+
 .friendbutton {
     background-color: #1E5945;
     cursor: pointer;
