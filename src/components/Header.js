@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import { useLocation } from 'react-router-dom';
 
-function Header() {
+function Header({profile, settings}) {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -22,10 +22,10 @@ function Header() {
         <header className="header">
             <h1 onClick={handleHome}>InvestEase</h1>
             <nav>
-                {location.pathname === '/home' && (
+                {profile === true && (
                     <button className="header-button" onClick={handleProfile}>Profile</button>
                 )}
-                {location.pathname === '/profile' && (
+                {settings === true && (
                     <button className="header-button" onClick={handleSettings}>Settings</button>
                 )}
             </nav>
