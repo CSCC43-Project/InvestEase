@@ -35,3 +35,8 @@
 .friendbutton:focus {
     background-color: #04a7aa;
 }
+
+.friends {
+    height: 364px;
+    overflow-y: scroll;
+}
