@@ -7,11 +7,28 @@ app.use(cors());
 app.use(express.json());
 
 // ! REGISTER PAGE
-// INSERT INTO users (userid, email, username, password, profile_pic) VALUES (__, $1, $2, $3, $4) RETURNING *;
+app.get('/registerUser', async (req, res) => {
+    try {
+        const { email, username, password, profile_pic } = req.params;
+        // const count = (await pool.query('SELECT * FROM users;')).rowCount;
+        // const user = await pool.query("INSERT INTO users (userid, email, username, password, profile_pic) VALUES ($1, $2, $3, $4, $5) RETURNING *", [count+1, email, username, password, profile_pic]);
+        return res.json({message: `${email} successfully registered.`});
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 
 // ! LOGIN PAGE
 // SELECT * FROM users WHERE email = $1 AND password = $2;
-
+app.get('/checkLogin', async (req, res) => {
+    try {
+        const { email, password } = req.params;
+        const user = await pool.query('SELECT * FROM users WHERE email == $1 AND password == &2');
+        //res.json(email == user.email && password == user.password);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 
 // ! PROFILE PAGE
     // * Get Username
@@ -48,6 +65,10 @@ app.use(express.json());
         }
     });
 
+// ! PROFILE PAGE
+// SELECT username FROM users WHERE userid = $1;
+// SELECT profile_pic FROM users WHERE userid = $1;
+// SELECT COUNT(*) FROM friends_list WHERE ownerID = $1 GROUP BY ownerID;
     // ? FriendsList
     // * Get User's Friends
     // SELECT * FROM friends_list WHERE ownerID = $1;
