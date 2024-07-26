@@ -62,7 +62,7 @@ function FriendList() {
                     <div>
                         {friendsList.map((friend) => {
                             return (
-                                <Friend key={friend.friendid} id={friend.friendid} />
+                                <Friend key={friend.friendid} id={friend.friendid} type='friends' status='mutual' />
                             );
                         })}
                     </div>}
@@ -70,7 +70,7 @@ function FriendList() {
                     <div>
                         {incomingList.map((friend) => {
                             return (
-                                <Friend key={friend.senderid} id={friend.senderid} />
+                                <Friend key={friend.senderid} id={friend.senderid} type='incoming' status={friend.request_status}/>
                             );
                         })}
                     </div>}
@@ -78,7 +78,7 @@ function FriendList() {
                     <div>
                         {outgoingList.map((friend) => {
                             return (
-                                <Friend key={friend.receiverid} id={friend.receiverid} />
+                                <Friend key={friend.receiverid} id={friend.receiverid} type='outgoing' status=''/>
                             );
                         })}
                     </div>}

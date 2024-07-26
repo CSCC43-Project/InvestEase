@@ -114,6 +114,55 @@ app.get('/checkLogin', async (req, res) => {
             console.error(error.message);
         }
     });
+    // ? FriendRequest: accept friend request
+    // INSERT INTO friends_list (ownerID, friendID) VALUES ($1, $2);
+    // DELETE FROM friend_request WHERE senderID = $1 AND receiverID = $2
+    app.post("/friendrequest/accept", async (req, res) => {
+        try {
+            const { ownerID, friendID } = req.body;
+            const newFriend = await pool.query("INSERT INTO friends_list (ownerID, friendID) VALUES ($1, $2) RETURNING *", [ownerID, friendID]);
+            const newFriend2 = await pool.query("INSERT INTO friends_list (ownerID, friendID) VALUES ($2, $1) RETURNING *", [ownerID, friendID]);
+            const deleteRequest = await pool.query("DELETE FROM friend_request WHERE senderID = $1 AND receiverID = $2", [friendID, ownerID]);
+            res.json(newFriend.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+    // ? FriendRequest: decline friend request from incoming
+    // UPDATE friend_request SET request_status = 'rej', time_received = NOW() WHERE senderID = $1 AND receiverID = $2;
+    app.put("/friendrequest/decline", async (req, res) => {
+        try {
+            const { senderID, receiverID } = req.body;
+            const declineRequest = await pool.query("UPDATE friend_request SET request_status = 'rej', time_received = NOW() WHERE senderID = $1 AND receiverID = $2", [senderID, receiverID]);
+            res.json(declineRequest.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+    // ? FriendRequest: cancel friend request from outgoing
+    // DELETE FROM friend_request WHERE senderID = $1 AND receiverID = $2;
+    app.delete("/friendrequest/cancel", async (req, res) => {
+        try {
+            const { senderID, receiverID } = req.body;
+            const cancelRequest = await pool.query("DELETE FROM friend_request WHERE senderID = $1 AND receiverID = $2", [senderID, receiverID]);
+            res.json(cancelRequest.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+    // ? FriendList: delete mutual friend
+    // DELETE FROM friends_list WHERE ownerID = $1 AND friendID = $2;
+    // DELETE FROM friends_list WHERE ownerID = $2 AND friendID = $1;
+    app.delete("/friendslist/delete", async (req, res) => {
+        try {
+            const { ownerID, friendID } = req.body;
+            const deleteFriend = await pool.query("DELETE FROM friends_list WHERE ownerID = $1 AND friendID = $2", [ownerID, friendID]);
+            const deleteFriend2 = await pool.query("DELETE FROM friends_list WHERE ownerID = $2 AND friendID = $1", [ownerID, friendID]);
+            res.json(deleteFriend.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
 
 // ! USERS PORTFOLIOS
     // ? Portfolio: Create new portfolio
