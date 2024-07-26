@@ -1,15 +1,25 @@
 import "./Friend.css";
-import { useState } from "react";
-function Friend() {
-    const [friend, setFriend] = useState({
-        name: "John Doe",
-        username: "johndoe",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    });
+import { useState, useEffect } from "react";
+function Friend({ id }) {
+    const [friend, setFriend] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/users/${id}`);
+                const jsonData = await response.json();
+                setFriend(jsonData);
+            } catch (err) {
+                console.log('Error occured when fetching books');
+            }
+        })
+        ();
+    }, []);
+    
     return (
         <div className="singlefriend">
-            <img className="profilepic" src={friend.avatar}></img>
-            <h1 style={{ marginRight: "1rem" }}>{friend.username}</h1>
+            <img className="profilepic" src={friend.profilepic_url}></img>
+            <h1 style={{ marginRight: "1rem" }}>{ friend.username }</h1>
         </div>
     );
 }
