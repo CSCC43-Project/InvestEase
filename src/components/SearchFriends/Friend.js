@@ -1,15 +1,54 @@
 import '../FriendList/Friend.css'
-function Friend() {
+import { useState, useEffect } from 'react';
+function Friend({id}) {
+    const [friend, setFriend] = useState([]);
+    const [friendCount, setFriendCount] = useState(0);
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await fetch('http://localhost:5000/users/' + id);
+                const jsonData = await response.json();
+                setFriend(jsonData);
+            } catch (err) {
+                console.log('Error occured when fetching user info');
+            }
+        })
+        ();
+    }, []);
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await fetch('http://localhost:5000/friendcount/' + id);
+                const jsonData = await response.json();
+                setFriendCount(jsonData.count);
+            } catch (err) {
+                console.log('Error occured when fetching user info');
+            }
+        })
+        ();
+    }, [setFriend]);
+    async function addFriend() {
+        try {
+            const response = await fetch('http://localhost:5000/friendrequest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ senderID: 1, receiverID: id }),
+            });
+            window.location.reload();
+        } catch (err) {
+            console.log('Error occured when sending friend request');
+        }
+    }
     return (
         <div className='singlefriend'>
-            <img className="profilepic" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png"></img>
+            <img className="profilepic" src={friend.profilepic_url}></img>
             <div className='friend-info'>
-                <h1>Username</h1>
+                <h1>{friend.username}</h1>
                 <div className='extra-info'>
-                    <p># followers</p>
+                    <p>{friendCount} Friends</p>
                 </div>
             </div>
-            <button>Add Friend</button>
+            <button onClick={addFriend}>Add Friend</button>
         </div>
     );
 }

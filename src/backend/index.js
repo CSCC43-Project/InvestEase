@@ -164,6 +164,18 @@ app.get('/checkLogin', async (req, res) => {
         }
     });
 
+    // ? Get All users - friends - already requested for search
+    // SELECT * FROM users WHERE userid = $1 EXCEPT SELECT * FROM friends_list WHERE ownerID = $1;
+    app.get("/searchfriends/:id", async (req, res) => {
+        try {
+            const { id } = req.params;
+            const friends = await pool.query("SELECT userid FROM users WHERE userid != $1 EXCEPT SELECT friendid FROM friends_list WHERE ownerID = $1 EXCEPT SELECT receiverid FROM friend_request WHERE senderid = $1", [id]);
+            res.json(friends.rows);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+
 // ! USERS PORTFOLIOS
     // ? Portfolio: Create new portfolio
     // INSERT INTO portfolios (userid, portfolio_name, cash_account) VALUES ($1, $2, $3) RETURNING *;
@@ -216,13 +228,24 @@ app.get('/users', async (req, res) => {
         console.error(error.message);
     }
 });
-// ? User: Get user info
+// ? User: Get user info by ID
     // SELECT * FROM users WHERE userid = $1;
     app.get('/users/:id', async (req, res) => {
         try {
             const { id } = req.params;
             const user = await pool.query('SELECT * FROM users WHERE userid = $1', [id]);
             res.json(user.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+// ? User: Get user info by username
+    // SELECT * FROM users WHERE username = $1;
+    app.get('/users/username/:username', async (req, res) => {
+        try {
+            const { username } = req.params;
+            const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+            res.json(user.rows);
         } catch (error) {
             console.error(error.message);
         }

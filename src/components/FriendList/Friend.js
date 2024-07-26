@@ -55,6 +55,19 @@ function Friend({ id, type, status }) {
             console.log('Error occurred when deleting friend request');
         }
     }
+    const deleteMutual = async () => {
+        console.log('delete button clicked');
+        try {
+            const response = await fetch(`http://localhost:5000/friendslist/delete`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ friendID: id, ownerID: 1 }),
+            });
+            window.location.reload();
+        } catch (err) {
+            console.log('Error occurred when deleting friend');
+        }
+    }
 
     return (
         <div className="singlefriend">
@@ -65,10 +78,10 @@ function Friend({ id, type, status }) {
                         <h1 style={{ marginRight: "1rem" }}>{ friend.username }</h1>
                     </div>
                     <div className="acc-buttons">
-                        <button className="decline" onClick={deleteOutgoing}>❌</button>
+                        <button className="decline" onClick={deleteMutual}>❌</button>
                     </div>
                 </div>
-    }
+            }
             { type === 'incoming' && status === 'ipr' &&
                 <div className="friend-info">
                     <div className="info">
