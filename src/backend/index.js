@@ -182,10 +182,51 @@ app.get('/checkLogin', async (req, res) => {
     // ? Portfolio: Get all portfolios
     // SELECT * FROM portfolios WHERE userid = $1;
     // ? Portfolio: Get specific portfolios
-    // SELECT * FROM portfolios WHERE userid = $1 AND portfolio_id = $2;
-    // SELECT * FROM stock_holding WHERE portfolio_id = $1 AND userid = $2 AND stock_symbol = $3 AND s;
-    // ? Portfolio: Update cash account --> withdraw/deposit
+    // SELECT * FROM portfolios WHERE userid = $1 AND portfolioid = $2;
+    app.get('/portfolios/:portfolioid/:id', async (req, res) => {
+        try {
+            const { id, portfolioid } = req.params;
+            const portfolios = await pool.query('SELECT * FROM portfolio WHERE userid = $1 AND portfolioid = $2', [id, portfolioid]);
+            res.json(portfolios.rows);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+    // ? StckHolding: Get all stock holdings for a portfolio
+    // SELECT * FROM stock_holding WHERE portfolio_id = $1 AND userid = $2;
+    app.get('/stockholdings/:portfolioid/:userid', async (req, res) => {
+        try {
+            const { portfolioid, userid } = req.params;
+            const stockHoldings = await pool.query('SELECT * FROM stock_holding WHERE portfolioid = $1 AND userid = $2', [portfolioid, userid]);
+            res.json(stockHoldings.rows);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+    // ? Portfolio: Update cash account --> withdraw/deposit/buy/sell
     // UPDATE portfolios SET cash_account = $1 WHERE userid = $2 AND portfolio_id = $3 RETURNING *;
+    app.put('/portfolios/:portfolioid/:userid', async (req, res) => {
+        try {
+            const { portfolioid, userid } = req.params;
+            const { cash_account } = req.body;
+            const updateCashAccount = await pool.query('UPDATE portfolio SET cash_account = $1 WHERE userid = $2 AND portfolioid = $3 RETURNING *', [cash_account, userid, portfolioid]);
+            res.json(updateCashAccount.rows);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+    // ? StockHolding: Update number of shares
+    // UPDATE stock_holding SET num_shares = $1 WHERE portfolio_id = $2 AND userid = $3 AND stock_symbol = $4 AND timestamp = $5 RETURNING *;
+    app.put('/stockholding/:portfolioid/:userid', async (req, res) => {
+        try {
+            const { portfolioid, userid } = req.params;
+            const { num_shares, stock_symbol, timestamp } = req.body;
+            const updateCashAccount = await pool.query('UPDATE stock_holding SET num_shares = $1 WHERE userid = $2 AND portfolioid = $3 AND stock_symbol = $4 AND timestamp = $5 RETURNING *', [num_shares, userid, portfolioid, stock_symbol, timestamp]);
+            res.json(updateCashAccount.rows);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
     // ? StockHolding: Get all Stock Holdings
     // SELECT * FROM stock_holding WHERE portfolio_id = $1 AND userid = $2;
     // ? StockHolding: Get specific Stock Holding
@@ -196,6 +237,26 @@ app.get('/checkLogin', async (req, res) => {
 
 // ! STOCKS PAGE
 // SELECT * FROM stocks WHERE symbol = $1 AND timestamp = $2;
+app.get('/stocks/:symbol/:timestamp', async (req, res) => {
+    try {
+        const { symbol, timestamp } = req.params;
+        const stock = await pool.query('SELECT * FROM stocks WHERE symbol = $1 AND timestamp = $2', [symbol, timestamp]);
+        res.json(stock.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+// ? Get the latest stock price
+// SELECT close FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1;
+app.get('/lateststocks/:symbol', async (req, res) => {
+    try {
+        const { symbol } = req.params;
+        const stock = await pool.query('SELECT close FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1', [symbol]);
+        res.json(stock.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
     // ? View statistics of a specifc stock
     // SELECT close FROM stocks WHERE symbol = $1;
 
