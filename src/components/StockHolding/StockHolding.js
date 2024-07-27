@@ -1,26 +1,27 @@
 import './StockHolding.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function StockHolding({ updateCashAccount }) {
+export default function StockHolding({ stock, cashAccount }) {
     const [amount, setAmount] = useState(500);
     const [tempAmount, setTempAmount] = useState(0);
-    const [stockPrice, setStockPrice] = useState(50);
+    const [stockPrice, setStockPrice] = useState(0);
+    const [latestStockPrice, setLatestStockPrice] = useState(0);
     const [cost, setCost] = useState(0);
     const [confirm, setConfirm] = useState(false);
     
     function buy() {
         setTempAmount(tempAmount + 1);
-        setCost((tempAmount + 1) * stockPrice);
+        setCost((tempAmount + 1) * latestStockPrice);
     }
     function sell() {
         setTempAmount(tempAmount - 1);
-        setCost((tempAmount - 1) * stockPrice);
+        setCost((tempAmount - 1) * latestStockPrice);
     }
     function confirmSale() {
         setConfirm(true);
         setTempAmount(0);
-        setAmount(amount + tempAmount);
-        updateCashAccount(cost);
+        updateShares(stock.num_shares + tempAmount);
+        updateCash(cashAccount - cost);
         setCost(0);
     }
     function rejectSale() {
@@ -28,11 +29,61 @@ export default function StockHolding({ updateCashAccount }) {
         setTempAmount(0);
         setCost(0);
     }
+    // get full stock info
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/stocks/${stock.stock_symbol}/${stock.timestamp}`);
+                const jsonData = await response.json();
+                setStockPrice(jsonData[0].close);
+            } catch (err) {
+                console.error(err.message);
+            }
+        })();
+    }, []);
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/lateststocks/${stock.stock_symbol}`);
+                const jsonData = await response.json();
+                setLatestStockPrice(jsonData[0].close);
+            } catch (err) {
+                console.error(err.message);
+            }
+        })();
+    }, []);
+    async function updateCash(amount) {
+        try {
+            const response = await fetch(`http://localhost:5000/portfolios/${stock.portfolioid}/1`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cash_account: amount })
+            });
+            const jsonData = await response.json();
+            window.location.reload();
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+    async function updateShares(amount) {
+        try {
+            const response = await fetch(`http://localhost:5000/stockholding/${stock.portfolioid}/1`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ num_shares: amount, stock_symbol: stock.stock_symbol, timestamp: stock.timestamp })
+            });
+            const jsonData = await response.json();
+            window.location.reload();
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
     return(
         <tr>
-            <th scope="row">APL</th>
-            <td>{amount}</td>
+            <th scope="row">{stock.stock_symbol}</th>
+            <td>{stock.num_shares}</td>
             <td>{stockPrice}</td>
+            <td>{latestStockPrice}</td>
             <td>
                 <button className='buy' onClick={buy}>+</button>    
             </td>

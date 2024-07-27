@@ -1,14 +1,59 @@
 import Header from '../components/Header';
 import StockHoldingList from '../components/StockHolding/StockHoldingList';
 import '../components/Portfolio.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function SinglePortfolio() {
-    const [cashAccount, setCashAccount] = useState(5000);
+    const portfolioID = 1;
+    const [userInfo, setUserInfo] = useState([]);
+    const [portfolioInfo, setPortfolioInfo] = useState([]);
     const [marketValue, setMarketValue] = useState(10);
+    const [amount, setAmount] = useState(0);
 
-    const updateCashAccount = (amount) => {
-        setCashAccount(cashAccount - amount);
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await fetch('http://localhost:5000/users/1');
+                const jsonData = await response.json();
+                setUserInfo(jsonData);
+            } catch (err) {
+                console.error(err.message);
+            }
+        })();
+    }, []);
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/portfolios/${portfolioID}/1`);
+                const jsonData = await response.json();
+                setPortfolioInfo(jsonData[0]);
+            } catch (err) {
+                console.error(err.message);
+            }
+        })();
+    }, []);
+
+    async function updateCash(amt) {
+        try {
+            const response = await fetch(`http://localhost:5000/portfolios/${portfolioID}/1`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cash_account: amt })
+            });
+            const jsonData = await response.json();
+            window.location.reload();
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+    const handleInputChange = (e) => {
+        setAmount(e.target.value);
+    }
+    const handleDeposit = () => {
+        updateCash(Number(portfolioInfo.cash_account) + Number(amount));
+    }
+    const handleWithdraw = () => {
+        updateCash(portfolioInfo.cash_account - amount);
     }
 
     return (
@@ -16,24 +61,26 @@ export default function SinglePortfolio() {
             <Header profile={true} />
             <div className='portfolio' style={{ color: 'white', padding: 5 }}>
                 <div className='full-p-info'>
-                    <div className='portfolio-info'
-                        style={{ color: 'white' }}>
-                            <h1>Portfolio Name</h1>
+                    <div className='portfolio-info'>
+                            <h1>{userInfo.username}'s Portfolio #{portfolioInfo.portfolioid}</h1>
                             <button>View Portfolio Statistics</button>
                     </div>
-                    <p><span style={{ fontWeight: 'bold' }}>Owner</span>: Username</p>
-                    <p><span style={{ fontWeight: 'bold' }}>Created</span>: Date</p>
-                    <p><span style={{ fontWeight: 'bold' }}>Cash Account</span>: ${cashAccount}</p>
-                    <p><span style={{ fontWeight: 'bold' }}>Estimated present market value</span>: {marketValue}%</p>
+                    <h2 className='account'><span style={{ color: 'black' }}>Cash Account</span>: ${portfolioInfo.cash_account}</h2>
+                    <p className='account'><span style={{ color: 'black' }}>Estimated present market value</span>: {marketValue}%</p>
                 </div>
+                <h2 style={{ color: 'white' }}>Money Transactions</h2>
             </div>
             <div className='money-transactions'>
-                <button className='money'>Deposit</button>
-                <button className='money'>Withdraw</button>
+                <div>
+                    <p style={{ color: 'white' }}>Deposit or withdraw money from your cash account</p>
+                </div>
+                <input className='money-input' type='number' placeholder='Amount' value={amount} onChange={handleInputChange}></input>
+                <button className='money' onClick={handleDeposit}>Deposit</button>
+                <button className='money' onClick={handleWithdraw}>Withdraw</button>
             </div>
             <div>
                 <h1 style={{ color: 'white', paddingTop: 20 }}>Stock Holdings</h1>
-                <StockHoldingList updateCashAccount={updateCashAccount} />
+                <StockHoldingList cashAccount={portfolioInfo.cash_account} portfolioID={portfolioID} />
             </div>
             <button className='trans-history'>View Stock Transaction List</button>
             <button className='add-stocks'>Add Stocks to Holdings</button>
