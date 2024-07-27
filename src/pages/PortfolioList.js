@@ -1,11 +1,10 @@
 import Header from '../components/Header';
 import { useEffect, useState } from 'react';
-import { getID } from '../constants/userid';
 import '../components/Portfolio.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function PortfolioList() {
-    let uid = getID();
+    let uid = localStorage.getItem('userid');
     const navigate = useNavigate();
     const [portfolioList, setPortfolioList] = useState([]);
     useEffect(() => {

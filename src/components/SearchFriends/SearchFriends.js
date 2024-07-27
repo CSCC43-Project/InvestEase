@@ -1,13 +1,13 @@
 import './SearchFriends.css';
 import Friend from './Friend';
 import { useState, useEffect } from 'react';
-import { getID } from '../../constants/userid';
 
 function SearchFriends({ search }) {
+    const uid = localStorage.getItem('userid');
     const [searchResults, setSearchResults] = useState([]);
     const getAllUsers = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/searchfriends/${getID()}`);
+            const response = await fetch(`http://localhost:5000/searchfriends/${uid}`);
             const jsonData = await response.json();
             setSearchResults(jsonData);
         } catch (err) {

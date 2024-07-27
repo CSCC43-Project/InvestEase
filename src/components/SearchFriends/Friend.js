@@ -1,9 +1,8 @@
 import '../FriendList/Friend.css'
 import { useState, useEffect } from 'react';
-import { getID } from '../../constants/userid';
 
 function Friend({id}) {
-    const uid = getID();
+    const uid = localStorage.getItem('userid');
     const [friend, setFriend] = useState([]);
     const [friendCount, setFriendCount] = useState(0);
     useEffect(() => {

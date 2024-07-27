@@ -2,10 +2,10 @@ import Header from '../components/Header';
 import StockHoldingList from '../components/StockHolding/StockHoldingList';
 import '../components/Portfolio.css';
 import { useState, useEffect } from 'react';
-import { getID } from '../constants/userid';
 import { useParams } from 'react-router-dom';
 
 export default function SinglePortfolio() {
+    const uid = localStorage.getItem('userid');
     const portfolioID = useParams().id;
     const [userInfo, setUserInfo] = useState([]);
     const [portfolioInfo, setPortfolioInfo] = useState([]);
@@ -15,7 +15,7 @@ export default function SinglePortfolio() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch(`http://localhost:5000/users/${getID()}`);
+                const response = await fetch(`http://localhost:5000/users/${uid}`);
                 const jsonData = await response.json();
                 setUserInfo(jsonData);
             } catch (err) {
@@ -26,7 +26,7 @@ export default function SinglePortfolio() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch(`http://localhost:5000/portfolios/${portfolioID}/${getID()}`);
+                const response = await fetch(`http://localhost:5000/portfolios/${portfolioID}/${uid}`);
                 const jsonData = await response.json();
                 setPortfolioInfo(jsonData[0]);
             } catch (err) {
@@ -37,7 +37,7 @@ export default function SinglePortfolio() {
 
     async function updateCash(amt) {
         try {
-            const response = await fetch(`http://localhost:5000/portfolios/${portfolioID}/${getID()}`, {
+            const response = await fetch(`http://localhost:5000/portfolios/${portfolioID}/${uid}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cash_account: amt })

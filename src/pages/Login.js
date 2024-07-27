@@ -1,7 +1,6 @@
 import { useNavigate, Link} from "react-router-dom";
 import "../components/LoginRegister.css"
 import { useState } from "react";
-import { getID, setID } from "../constants/userid";
 
 export default function Login() {
     const navigate = useNavigate();

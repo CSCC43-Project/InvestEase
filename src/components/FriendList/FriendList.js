@@ -1,9 +1,9 @@
 import "./FriendList.css";
 import Friend from "./Friend";
 import { useState, useEffect } from "react";
-import { getID } from "../../constants/userid";
 
 function FriendList() {
+    const uid = localStorage.getItem('userid');
     const [friend, setFriend] = useState(true);
     const [friendsList, setFriendsList] = useState([]);
     const [incoming, setIncoming] = useState(false);
@@ -14,7 +14,7 @@ function FriendList() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch(`http://localhost:5000/friendslist/${getID()}`);
+                const response = await fetch(`http://localhost:5000/friendslist/${uid}`);
                 const jsonData = await response.json();
                 setFriendsList(jsonData);
             } catch (err) {
@@ -27,7 +27,7 @@ function FriendList() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch(`http://localhost:5000/friendslist/incoming/${getID()}`);
+                const response = await fetch(`http://localhost:5000/friendslist/incoming/${uid}`);
                 const jsonData = await response.json();
                 setIncomingList(jsonData);
             } catch (err) {
@@ -40,7 +40,7 @@ function FriendList() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch(`http://localhost:5000/friendslist/outgoing/${getID()}`);
+                const response = await fetch(`http://localhost:5000/friendslist/outgoing/${uid}`);
                 const jsonData = await response.json();
                 setOutgoingList(jsonData);
             } catch (err) {
