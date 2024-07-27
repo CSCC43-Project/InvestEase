@@ -4,7 +4,6 @@ import { useState } from "react";
 import { getID, setID } from "../constants/userid";
 
 export default function Login() {
-    const userID = setID();
     const navigate = useNavigate();
     const [input, setInput] = useState({
         email: '',
