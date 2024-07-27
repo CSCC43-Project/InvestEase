@@ -9,7 +9,7 @@ app.use(express.json());
 // ! REGISTER PAGE
 app.post('/registerUser', async (req, res) => {
     try {
-        const { email, username, password, profile_pic } = req.body;
+        const { email, username, password } = req.body;
         const count = (await pool.query('SELECT * FROM users;')).rowCount + 1;
         
         const checkEmail = await pool.query("SELECT email FROM users WHERE email = $1", [email]);
@@ -17,7 +17,7 @@ app.post('/registerUser', async (req, res) => {
             return res.status(400).json({message: "This email is being used."})
         }
 
-        const user = await pool.query("INSERT INTO users (userid, email, profilepic_url, username, password) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [count, email, profile_pic, username, password]);
+        const user = await pool.query("INSERT INTO users (userid, email, username, password) VALUES ($1, $2, $3, $4) RETURNING *;", [count, email, username, password]);
         res.json({response: `${username} added successfully`});
     } catch (error) {
         console.error(error.message);
@@ -42,7 +42,7 @@ app.post('/checkLogin', async (req, res) => {
             return res.status(401).json({ response: "Email or Password invalid."})
         }
     } catch (error) {
-        console.error(error.message);
+        return console.error(error.message);
     }
 });
 

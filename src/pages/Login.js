@@ -1,6 +1,7 @@
 import { useNavigate, Link} from "react-router-dom";
 import "../components/LoginRegister.css"
 import { useState } from "react";
+import { setID } from "../constants/userid";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -16,28 +17,28 @@ export default function Login() {
         }))
     }
 
-    const handlesubmit = async () =>  {
-        // try {
-        //     const login = await fetch('http://localhost:5000/checkLogin', {
-        //         method: "POST",
-        //         headers: { "Content-Type": "application/json" },
-        //         body: JSON.stringify({email: input.email, password: input.password}),
-        //     });
+    const handlesubmit = async (e) =>  {
+        try {
+            const login = await fetch('http://localhost:5000/checkLogin', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({email: input.email, password: input.password}),
+            });
 
-        //     const data = await login.json();
+            const data = await login.json();
             
-        //     if(login.ok){
-        //         const { response, userid } = data;
-        //         setInput(data);
-        //         console.log(userid)
-        //         //setID(userid);
-        //         navigate('/home'); 
-        //     }
-        //     console.log("bad");
-        // } catch (error) {
-        //     console.error(error.message);
-        // }
-        navigate('/home');
+            if(login.ok){
+                const { response, userid } = data;
+                setInput(data);
+                console.log(userid);
+                setID(userid);
+                navigate('/home'); 
+            } else {
+                throw new Error("Network error")
+            }
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 
     return (
@@ -48,7 +49,6 @@ export default function Login() {
                     <div>
                         <input
                             className="form-input"
-                            id="email"
                             type="email"
                             name="email"
                             placeholder="Email"
@@ -59,7 +59,6 @@ export default function Login() {
                     <div>
                         <input
                             className="form-input"
-                            id="password"
                             type="password"
                             name="password"
                             placeholder="Password"

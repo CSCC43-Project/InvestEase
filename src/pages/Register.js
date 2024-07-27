@@ -6,6 +6,7 @@ export default function Login() {
     const navigate = useNavigate();
     const [input, setInput] = useState({
         email: '',
+        username: '',
         password: '',
         password2: ''
     });
@@ -39,6 +40,17 @@ export default function Login() {
                             placeholder="Email"
                             value={input.email}
                             onChange={(event) => inputChange('email', event.target.value)}>
+                        </input>
+                    </div>
+                    <div>
+                        <input
+                            className="form-input"
+                            id="username"
+                            type="username"
+                            name="username"
+                            placeholder="Username"
+                            value={input.username}
+                            onChange={(event) => inputChange('username', event.target.value)}>
                         </input>
                     </div>
                     <div>
