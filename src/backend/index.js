@@ -276,12 +276,22 @@ app.get('/stocks/:symbol/:timestamp', async (req, res) => {
         console.error(error.message);
     }
 });
+// ? Get all stocks with the latest stock price for each stock
+// SELECT DISTINCT ON (symbol) * FROM stocks ORDER BY symbol, timestamp DESC;
+app.get('/lateststocks', async (req, res) => {
+    try {
+        const stocks = await pool.query('SELECT DISTINCT ON (symbol) * FROM stocks ORDER BY symbol, timestamp DESC');
+        res.json(stocks.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 // ? Get the latest stock price
 // SELECT close FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1;
 app.get('/lateststocks/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
-        const stock = await pool.query('SELECT close FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1', [symbol]);
+        const stock = await pool.query('SELECT * FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1', [symbol]);
         res.json(stock.rows);
     } catch (error) {
         console.error(error.message);
