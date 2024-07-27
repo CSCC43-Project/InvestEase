@@ -1,9 +1,10 @@
 import { useNavigate, Link} from "react-router-dom";
 import "../components/LoginRegister.css"
 import { useState } from "react";
-import { setID } from "../constants/userid";
+import { getID, setID } from "../constants/userid";
 
 export default function Login() {
+    const userID = setID();
     const navigate = useNavigate();
     const [input, setInput] = useState({
         email: '',
@@ -18,6 +19,7 @@ export default function Login() {
     }
 
     const handlesubmit = async (e) =>  {
+        e.preventDefault();
         try {
             const login = await fetch('http://localhost:5000/checkLogin', {
                 method: "POST",
@@ -28,10 +30,8 @@ export default function Login() {
             const data = await login.json();
             
             if(login.ok){
-                const { response, userid } = data;
-                setInput(data);
-                console.log(userid);
-                setID(userid);
+                setID(data.userid);
+                console.log(getID());
                 navigate('/home'); 
             } else {
                 throw new Error("Network error")
@@ -69,9 +69,7 @@ export default function Login() {
                     <p>
                         Don't have an account? <Link to='/register'>Sign up</Link>
                     </p>
-                    <p>
-                        <button type="submit" className="form-submit">Sign In</button>
-                    </p>
+                    <button type="submit" className="form-submit">Sign In</button>
                 </form>
             </div>
         </div>
