@@ -1,5 +1,6 @@
 import './StockHolding.css';
 import { useEffect, useState } from 'react';
+import { getID } from '../../constants/userid';
 
 export default function StockHolding({ stock, cashAccount }) {
     const [amount, setAmount] = useState(500);
@@ -54,7 +55,7 @@ export default function StockHolding({ stock, cashAccount }) {
     }, []);
     async function updateCash(amount) {
         try {
-            const response = await fetch(`http://localhost:5000/portfolios/${stock.portfolioid}/1`, {
+            const response = await fetch(`http://localhost:5000/portfolios/${stock.portfolioid}/${getID()}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cash_account: amount })
@@ -67,7 +68,7 @@ export default function StockHolding({ stock, cashAccount }) {
     }
     async function updateShares(amount) {
         try {
-            const response = await fetch(`http://localhost:5000/stockholding/${stock.portfolioid}/1`, {
+            const response = await fetch(`http://localhost:5000/stockholding/${stock.portfolioid}/${getID()}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ num_shares: amount, stock_symbol: stock.stock_symbol, timestamp: stock.timestamp })

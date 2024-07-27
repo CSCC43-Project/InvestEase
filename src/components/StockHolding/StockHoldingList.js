@@ -1,13 +1,14 @@
 import './StockHoldingList.css';
 import StockHolding from './StockHolding';
 import { useState, useEffect } from 'react';
+import { getID } from '../../constants/userid';
 
 export default function StockHoldingList({ cashAccount, portfolioID }) {
     const [stockHoldings, setStockHoldings] = useState([]);
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch(`http://localhost:5000/stockholdings/${portfolioID}/1`);
+                const response = await fetch(`http://localhost:5000/stockholdings/${portfolioID}/${getID()}`);
                 const jsonData = await response.json();
                 setStockHoldings(jsonData);
             } catch (err) {

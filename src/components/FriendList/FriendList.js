@@ -1,6 +1,7 @@
 import "./FriendList.css";
 import Friend from "./Friend";
 import { useState, useEffect } from "react";
+import { getID } from "../../constants/userid";
 
 function FriendList() {
     const [friend, setFriend] = useState(true);
@@ -13,7 +14,7 @@ function FriendList() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch('http://localhost:5000/friendslist/1');
+                const response = await fetch(`http://localhost:5000/friendslist/${getID()}`);
                 const jsonData = await response.json();
                 setFriendsList(jsonData);
             } catch (err) {
@@ -26,7 +27,7 @@ function FriendList() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch('http://localhost:5000/friendslist/incoming/1');
+                const response = await fetch(`http://localhost:5000/friendslist/incoming/${getID()}`);
                 const jsonData = await response.json();
                 setIncomingList(jsonData);
             } catch (err) {
@@ -39,7 +40,7 @@ function FriendList() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch('http://localhost:5000/friendslist/outgoing/1');
+                const response = await fetch(`http://localhost:5000/friendslist/outgoing/${getID()}`);
                 const jsonData = await response.json();
                 setOutgoingList(jsonData);
             } catch (err) {

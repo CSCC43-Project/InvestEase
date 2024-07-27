@@ -1,4 +1,4 @@
-let userId = null;
+let userId = 1;
 
 export function setID(id){
     userId = id;

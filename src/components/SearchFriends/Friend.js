@@ -1,6 +1,9 @@
 import '../FriendList/Friend.css'
 import { useState, useEffect } from 'react';
+import { getID } from '../../constants/userid';
+
 function Friend({id}) {
+    const uid = getID();
     const [friend, setFriend] = useState([]);
     const [friendCount, setFriendCount] = useState(0);
     useEffect(() => {
@@ -32,7 +35,7 @@ function Friend({id}) {
             const response = await fetch('http://localhost:5000/friendrequest', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ senderID: 1, receiverID: id }),
+                body: JSON.stringify({ senderID: uid, receiverID: id }),
             });
             window.location.reload();
         } catch (err) {

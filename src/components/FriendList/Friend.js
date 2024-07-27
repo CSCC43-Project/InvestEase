@@ -1,5 +1,7 @@
 import "./Friend.css";
 import { useState, useEffect } from "react";
+import { getID } from "../../constants/userid";
+
 function Friend({ id, type, status }) {
     const [friend, setFriend] = useState([]);
 
@@ -22,7 +24,7 @@ function Friend({ id, type, status }) {
             const response = await fetch(`http://localhost:5000/friendrequest/accept`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ friendID: id, ownerID: 1 }),
+                body: JSON.stringify({ friendID: id, ownerID: getID() }),
             });
             window.location.reload();
         } catch (err) {
@@ -35,7 +37,7 @@ function Friend({ id, type, status }) {
             const response = await fetch(`http://localhost:5000/friendrequest/decline`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ friendID: id, ownerID: 1 }),
+                body: JSON.stringify({ friendID: id, ownerID: getID() }),
             });
             window.location.reload();
         } catch (err) {
@@ -48,7 +50,7 @@ function Friend({ id, type, status }) {
             const response = await fetch(`http://localhost:5000/friendrequest/cancel`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ senderID: 1, receiverID: id }),
+                body: JSON.stringify({ senderID: getID(), receiverID: id }),
             });
             window.location.reload();
         } catch (err) {
@@ -61,7 +63,7 @@ function Friend({ id, type, status }) {
             const response = await fetch(`http://localhost:5000/friendslist/delete`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ friendID: id, ownerID: 1 }),
+                body: JSON.stringify({ friendID: id, ownerID: getID() }),
             });
             window.location.reload();
         } catch (err) {
