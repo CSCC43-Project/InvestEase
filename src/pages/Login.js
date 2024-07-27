@@ -1,7 +1,6 @@
 import { useNavigate, Link} from "react-router-dom";
 import "../components/LoginRegister.css"
 import { useState } from "react";
-import { getID, setID } from "../constants/userid";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -29,8 +28,7 @@ export default function Login() {
             const data = await login.json();
             
             if(login.ok){
-                setID(data.userid);
-                console.log(getID());
+                localStorage.setItem('userid', data.userid);
                 navigate('/home'); 
             } else {
                 alert(data.response);

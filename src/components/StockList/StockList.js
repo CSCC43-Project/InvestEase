@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import Stock from './Stock';
-import { getID } from '../../constants/userid';
 import { useParams } from 'react-router-dom';
 
 export default function StockList() {
-    const uid = getID();
+    const uid = localStorage.getItem('userid');
     let ownerid = useParams().id;
     const [stocklists, setStocklists] = useState([]);
     useEffect(() => {

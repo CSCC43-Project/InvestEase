@@ -4,9 +4,9 @@ import '../components/User.css';
 import { useNavigate } from "react-router-dom";
 import SearchFriends from '../components/SearchFriends/SearchFriends';
 import { useState, useEffect } from 'react';
-import { getID } from '../constants/userid';
 
 export default function UserProfile() {
+    const uid = localStorage.getItem('userid');
     const [userInfo, setUserInfo] = useState([]);
     const [friendCount, setFriendCount] = useState(0);
     const [openSearch, setOpenSearch] = useState(false);
@@ -17,7 +17,7 @@ export default function UserProfile() {
     }
     const getUserInfo = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/users/${getID()}`);
+            const response = await fetch(`http://localhost:5000/users/${uid}`);
             const jsonData = await response.json();
             setUserInfo(jsonData);
         } catch (err) {
@@ -27,7 +27,7 @@ export default function UserProfile() {
 
     const getFriendCount = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/friendcount/${getID()}`);
+            const response = await fetch(`http://localhost:5000/friendcount/${uid}`);
             const jsonData = await response.json();
             setFriendCount(jsonData.count);
         } catch (err) {

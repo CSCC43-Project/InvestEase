@@ -1,9 +1,9 @@
 import "./Friend.css";
 import { useState, useEffect } from "react";
-import { getID } from "../../constants/userid";
 import { useNavigate } from "react-router-dom";
 
 function Friend({ id, type, status }) {
+    const uid = localStorage.getItem('userid');
     const [friend, setFriend] = useState([]);
     const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ function Friend({ id, type, status }) {
             const response = await fetch(`http://localhost:5000/friendrequest/accept`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ friendID: id, ownerID: getID() }),
+                body: JSON.stringify({ friendID: id, ownerID: uid }),
             });
             window.location.reload();
         } catch (err) {
@@ -39,7 +39,7 @@ function Friend({ id, type, status }) {
             const response = await fetch(`http://localhost:5000/friendrequest/decline`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ friendID: id, ownerID: getID() }),
+                body: JSON.stringify({ friendID: id, ownerID: uid }),
             });
             window.location.reload();
         } catch (err) {
@@ -52,7 +52,7 @@ function Friend({ id, type, status }) {
             const response = await fetch(`http://localhost:5000/friendrequest/cancel`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ senderID: getID(), receiverID: id }),
+                body: JSON.stringify({ senderID: uid, receiverID: id }),
             });
             window.location.reload();
         } catch (err) {
@@ -65,7 +65,7 @@ function Friend({ id, type, status }) {
             const response = await fetch(`http://localhost:5000/friendslist/delete`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ friendID: id, ownerID: getID() }),
+                body: JSON.stringify({ friendID: id, ownerID: uid }),
             });
             window.location.reload();
         } catch (err) {
