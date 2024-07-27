@@ -45,3 +45,8 @@ button {
     margin-left: auto;
     margin-right: auto;
 }
+
+.single-portfolio {
+    border: 1px solid #ccc;
+    cursor: pointer;
+}

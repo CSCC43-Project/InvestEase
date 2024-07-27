@@ -1,10 +1,9 @@
 import './Stock.css';
 
-export default function Stock() {
+export default function Stock({ stocklist }) {
     return(
-        <div className="clickable-box">
-            <p>Stock</p>
-            <p>Add info about stock</p>
+        <div className="stock-info">
+            <h3 className='name'>Stock List {stocklist.stocklistid}</h3>
         </div>
     );
 }
