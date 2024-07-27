@@ -13,7 +13,7 @@ export default function UserProfile() {
     const navigate = useNavigate();
     
     function handlePortfolio(){
-        navigate('/portfolio/0')
+        navigate('/portfolio');
     }
     const getUserInfo = async () => {
         try {

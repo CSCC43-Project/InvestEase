@@ -3,9 +3,10 @@ import StockHoldingList from '../components/StockHolding/StockHoldingList';
 import '../components/Portfolio.css';
 import { useState, useEffect } from 'react';
 import { getID } from '../constants/userid';
+import { useParams } from 'react-router-dom';
 
 export default function SinglePortfolio() {
-    const portfolioID = 1;
+    const portfolioID = useParams().id;
     const [userInfo, setUserInfo] = useState([]);
     const [portfolioInfo, setPortfolioInfo] = useState([]);
     const [marketValue, setMarketValue] = useState(10);

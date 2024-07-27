@@ -1,9 +1,11 @@
 import "./Friend.css";
 import { useState, useEffect } from "react";
 import { getID } from "../../constants/userid";
+import { useNavigate } from "react-router-dom";
 
 function Friend({ id, type, status }) {
     const [friend, setFriend] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
@@ -70,12 +72,16 @@ function Friend({ id, type, status }) {
             console.log('Error occurred when deleting friend');
         }
     }
+    
+    const handleFriend = (id) => {
+        navigate(`/profile/${id}`);
+    };
 
     return (
         <div className="singlefriend">
             { status === 'mutual' &&
                 <div className="friend-info">
-                    <div className="info">
+                    <div className="info" onClick={() => handleFriend(friend.userid)}>
                         <img className="profilepic" src={friend.profilepic_url}></img>
                         <h1 style={{ marginRight: "1rem" }}>{ friend.username }</h1>
                     </div>
@@ -86,7 +92,7 @@ function Friend({ id, type, status }) {
             }
             { type === 'incoming' && status === 'ipr' &&
                 <div className="friend-info">
-                    <div className="info">
+                    <div className="info" onClick={() => handleFriend(friend.userid)}>
                         <img className="profilepic" src={friend.profilepic_url}></img>
                         <h1 style={{ marginRight: "1rem" }}>{ friend.username }</h1>
                     </div>
@@ -97,7 +103,7 @@ function Friend({ id, type, status }) {
                 </div>}
             { type === 'outgoing' &&
                 <div className="friend-info">
-                    <div className="info">
+                    <div className="info" onClick={() => handleFriend(friend.userid)}>
                         <img className="profilepic" src={friend.profilepic_url}></img>
                         <h1 style={{ marginRight: "1rem" }}>{ friend.username }</h1>
                     </div>

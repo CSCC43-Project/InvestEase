@@ -197,6 +197,15 @@ app.post('/checkLogin', async (req, res) => {
     // INSERT INTO portfolios (userid, portfolio_name, cash_account) VALUES ($1, $2, $3) RETURNING *;
     // ? Portfolio: Get all portfolios
     // SELECT * FROM portfolios WHERE userid = $1;
+    app.get('/portfolios/:id', async (req, res) => {
+        try {
+            const { id } = req.params;
+            const portfolios = await pool.query('SELECT * FROM portfolio WHERE userid = $1', [id]);
+            res.json(portfolios.rows);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
     // ? Portfolio: Get specific portfolios
     // SELECT * FROM portfolios WHERE userid = $1 AND portfolioid = $2;
     app.get('/portfolios/:portfolioid/:id', async (req, res) => {
@@ -277,6 +286,17 @@ app.get('/lateststocks/:symbol', async (req, res) => {
     // SELECT close FROM stocks WHERE symbol = $1;
 
 // ! STOCKLIST PAGE
+// * User Page: get all stock lists from a user that are public union all stock lists from a specific user that are shared with the logged in user
+// SELECT stocklistid FROM stock_list WHERE ownerid = $2 AND is_public = 't' UNION SELECT stocklistid from shared_stock_list WHERE shared_userid = $1;
+app.get('/stocklists/:uid/:ownerid', async (req, res) => {
+    try {
+        const { uid, ownerid } = req.params;
+        const stockLists = await pool.query('SELECT stocklistid FROM stock_list WHERE ownerid = $2 AND is_public = true UNION SELECT stocklistid from shared_stock_list WHERE shared_userid = $1', [uid, ownerid]);
+        res.json(stockLists.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 // ? StockList: Get all stock_list from a specific user
 // SELECT * FROM stock_list WHERE ownerID = $1;
 // ? StockList: Add a stock_list
