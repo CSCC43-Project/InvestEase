@@ -7,12 +7,18 @@ app.use(cors());
 app.use(express.json());
 
 // ! REGISTER PAGE
-app.get('/registerUser', async (req, res) => {
+app.post('/registerUser', async (req, res) => {
     try {
-        const { email, username, password, profile_pic } = req.params;
-        // const count = (await pool.query('SELECT * FROM users;')).rowCount;
-        // const user = await pool.query("INSERT INTO users (userid, email, username, password, profile_pic) VALUES ($1, $2, $3, $4, $5) RETURNING *", [count+1, email, username, password, profile_pic]);
-        return res.json({message: `${email} successfully registered.`});
+        const { email, username, password, profile_pic } = req.body;
+        const count = (await pool.query('SELECT * FROM users;')).rowCount + 1;
+        
+        const checkEmail = await pool.query("SELECT email FROM users WHERE email = $1", [email]);
+        if(checkEmail.rowCount > 0){
+            return res.status(400).json({message: "This email is being used."})
+        }
+
+        const user = await pool.query("INSERT INTO users (userid, email, profilepic_url, username, password) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [count, email, profile_pic, username, password]);
+        res.json({response: `${username} added successfully`});
     } catch (error) {
         console.error(error.message);
     }
@@ -20,11 +26,21 @@ app.get('/registerUser', async (req, res) => {
 
 // ! LOGIN PAGE
 // SELECT * FROM users WHERE email = $1 AND password = $2;
-app.get('/checkLogin', async (req, res) => {
+app.post('/checkLogin', async (req, res) => {
     try {
-        const { email, password } = req.params;
-        const user = await pool.query('SELECT * FROM users WHERE email == $1 AND password == &2');
-        //res.json(email == user.email && password == user.password);
+        const { email, password } = req.body;
+
+        if( !email || !password ){
+            return res.status(400).json({ response: "Email or Password Missing."});
+        }
+
+        const user = (await pool.query("SELECT userid, email, password FROM users WHERE email = $1", [email])).rows[0];
+
+        if(password === user.password){
+            return res.status(200).json({ response: "Successful login.", userid: user.userid});
+        } else {
+            return res.status(401).json({ response: "Email or Password invalid."})
+        }
     } catch (error) {
         console.error(error.message);
     }

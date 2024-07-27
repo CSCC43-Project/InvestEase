@@ -16,13 +16,28 @@ export default function Login() {
         }))
     }
 
-    function handlesubmit() {
-        const correctEmail = 'email@utoronto.ca'
-        const correctPassword = 'password'
-        
-        if (input.email === correctEmail &&  input.password === correctPassword){
-            navigate('/home');
-        }
+    const handlesubmit = async () =>  {
+        // try {
+        //     const login = await fetch('http://localhost:5000/checkLogin', {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify({email: input.email, password: input.password}),
+        //     });
+
+        //     const data = await login.json();
+            
+        //     if(login.ok){
+        //         const { response, userid } = data;
+        //         setInput(data);
+        //         console.log(userid)
+        //         //setID(userid);
+        //         navigate('/home'); 
+        //     }
+        //     console.log("bad");
+        // } catch (error) {
+        //     console.error(error.message);
+        // }
+        navigate('/home');
     }
 
     return (
