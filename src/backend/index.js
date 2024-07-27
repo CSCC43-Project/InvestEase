@@ -31,15 +31,20 @@ app.post('/checkLogin', async (req, res) => {
         const { email, password } = req.body;
 
         if( !email || !password ){
-            return res.status(400).json({ response: "Email or Password Missing."});
+            return res.status(400).json({ response: "Email or Password Missing." });
+        }
+
+        const checkEmail = await pool.query("SELECT email FROM users WHERE email = $1", [email]);
+        if(checkEmail.rowCount === 0){
+            return res.status(400).json({ response: "Email or Password invalid." })
         }
 
         const user = (await pool.query("SELECT userid, email, password FROM users WHERE email = $1", [email])).rows[0];
 
         if(password === user.password){
-            return res.status(200).json({ response: "Successful login.", userid: user.userid});
+            return res.status(200).json({ response: "Successful login.", userid: user.userid });
         } else {
-            return res.status(401).json({ response: "Email or Password invalid."})
+            return res.status(400).json({ response: "Email or Password invalid." })
         }
     } catch (error) {
         return console.error(error.message);

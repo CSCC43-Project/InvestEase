@@ -34,7 +34,7 @@ export default function Login() {
                 console.log(getID());
                 navigate('/home'); 
             } else {
-                throw new Error("Network error")
+                alert(data.response);
             }
         } catch (error) {
             console.error(error.message);
