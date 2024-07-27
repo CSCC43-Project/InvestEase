@@ -7,18 +7,35 @@ app.use(cors());
 app.use(express.json());
 
 // ! REGISTER PAGE
+// SELECT * FROM users;
+// SELECT email FROM users WHERE email = $1
+// INSERT INTO users (userid, email, username, password) VALUES ($1, $2, $3, $4) RETURNING *;
 app.post('/registerUser', async (req, res) => {
     try {
-        const { email, username, password } = req.body;
+        const { email, profilePic, username, password } = req.body;
+
+        if( !email || !username || !password ){
+            return res.status(400).json({ response: "Email or Username or Password Missing." });
+        }
+
         const count = (await pool.query('SELECT * FROM users;')).rowCount + 1;
         
         const checkEmail = await pool.query("SELECT email FROM users WHERE email = $1", [email]);
         if(checkEmail.rowCount > 0){
-            return res.status(400).json({message: "This email is being used."})
+            return res.status(400).json({response: "This email is being used."})
         }
 
-        const user = await pool.query("INSERT INTO users (userid, email, username, password) VALUES ($1, $2, $3, $4) RETURNING *;", [count, email, username, password]);
-        res.json({response: `${username} added successfully`});
+        const checkUsername = await pool.query("SELECT username FROM users WHERE username = $1", [username]);
+        if(checkUsername.rowCount > 0){
+            return res.status(400).json({response: "This username is being used."})
+        }
+
+        if(!profilePic){
+            const user = await pool.query("INSERT INTO users (userid, email, username, password) VALUES ($1, $2, $3, $4) RETURNING *;", [count, email, username, password]);
+        } else {
+            const user = await pool.query("INSERT INTO users (userid, email, profilepic_url, username, password) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [count, email, profilePic, username, password]);
+        }
+        res.json({response: `${username} added successfully`, userid: count});
     } catch (error) {
         console.error(error.message);
     }

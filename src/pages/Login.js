@@ -29,8 +29,7 @@ export default function Login() {
             const data = await login.json();
             
             if(login.ok){
-                setID(data.userid);
-                console.log(getID());
+                localStorage.setItem('userid', data.userid);
                 navigate('/home'); 
             } else {
                 alert(data.response);

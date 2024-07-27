@@ -1,12 +1,14 @@
 import { useNavigate, Link } from "react-router-dom";
 import "../components/LoginRegister.css"
 import { useState } from "react";
+import { setID } from "../constants/userid";
 
 export default function Login() {
     const navigate = useNavigate();
     const [input, setInput] = useState({
         email: '',
         username: '',
+        profilePic: '',
         password: '',
         password2: ''
     });
@@ -18,11 +20,29 @@ export default function Login() {
         }))
     }
 
-    function handlesubmit() {
-        if (input.password === input.password2){
-            navigate('/home');
+    const handlesubmit = async (e) =>  {
+        e.preventDefault();
+        if(input.password === input.password2){
+            try {
+                const login = await fetch('http://localhost:5000/registerUser', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({email: input.email, profilePic: input.profilePic ,username: input.username, password: input.password}),
+                });
+    
+                const data = await login.json();
+                
+                if(login.ok){
+                    localStorage.setItem('userid', data.userid);
+                    navigate('/home'); 
+                } else {
+                    alert(data.response);
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
         } else {
-            alert('inconsistent password');
+            alert('inconsistent password, retry.');
         }
     }
 
@@ -51,6 +71,17 @@ export default function Login() {
                             placeholder="Username"
                             value={input.username}
                             onChange={(event) => inputChange('username', event.target.value)}>
+                        </input>
+                    </div>
+                    <div>
+                        <input
+                            className="form-input"
+                            id="profilePic"
+                            type="url"
+                            name="url"
+                            placeholder="Enter a profile picture url"
+                            value={input.profilePic}
+                            onChange={(event) => inputChange('profilePic', event.target.value)}>
                         </input>
                     </div>
                     <div>
