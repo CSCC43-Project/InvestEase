@@ -47,13 +47,13 @@ export default function AnotherProfile() {
                 </div>
             </div>
             <div>
-                <h1>Stock Lists</h1>
+                <div className="another-user-container">
+                    <h1 className='another-user-left-title'>Stock Lists</h1>
+                    <button className='portfolio-stat'> View Portfolio Statistics </button>
+                </div>
                 <StockList />
             </div>
-            <button style={{ textDecoration: 'underline', fontSize: 'larger' }}
-                    className='portfolio-stat'>
-                    View Portfolio Statistics
-            </button>
+            
         </div>
     );
 }

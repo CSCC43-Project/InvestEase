@@ -12,6 +12,10 @@ button {
     margin: 5px;
 }
 
+button:hover {
+    background-color: #007233;
+}
+
 .portfolio-info {
     display: flex;
     align-items: center;
@@ -26,6 +30,14 @@ button {
 
 .money {
     width: 25%;
+}
+
+.portfolio-title{
+    margin-left: 50px;
+}
+
+.portfolio-add-button {
+    margin-right: 50px;
 }
 
 .trans-history {
@@ -46,7 +58,20 @@ button {
     margin-right: auto;
 }
 
+.portfolios {
+    background-color: #809A91;
+    padding: 20px;
+    width: 75%;
+    margin: 0 auto;
+    border-radius: 5px;
+    box-shadow: none;
+}
+
 .single-portfolio {
-    border: 1px solid #ccc;
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 5px;
     cursor: pointer;
 }
+

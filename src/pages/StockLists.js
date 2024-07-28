@@ -27,7 +27,10 @@ export default function StockLists(){
     return (
         <div>
             <Header profile={true}/>
-            <h1 className="title">Stock Lists</h1>
+            <div className="portfolio-info"> 
+                <h1 className="stock-list-title">Stock Lists</h1>
+                <button className='portfolio-add-button'>Add Stock List</button>
+            </div>
             <div className="container">
                 {stockLists.map((stocklist) => (
                     <div className="stockList">

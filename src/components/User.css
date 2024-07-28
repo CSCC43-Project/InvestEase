@@ -59,12 +59,31 @@ body {
     background-color: #04AA6D;
 }
 .portfolio-stat {
-    padding: 1rem;
-    background-color: #809A91;
-    border: 0;
-}
-.portfolio-stat:hover {
     background-color: #1E5945;
+    cursor: pointer;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px;
+}
+
+.portfolio-stat:hover {
+    background-color: #007233;
     color: white;
     cursor: pointer;
+}
+
+.another-user-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.another-user-left-title {
+    margin-left: 50px;
 }

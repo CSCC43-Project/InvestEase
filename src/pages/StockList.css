@@ -1,5 +1,5 @@
 
-.title {
+.stock-list-title {
   margin-left: 50px;
 }
 
@@ -26,9 +26,10 @@
   background-color: #1E5945;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 20px 30px;
   border-radius: 5px; 
   cursor: pointer;
+  font-size: 18px;
 }
 
 .editButton:hover {
