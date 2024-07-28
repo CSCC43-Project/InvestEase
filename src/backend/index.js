@@ -281,6 +281,40 @@ app.post('/checkLogin', async (req, res) => {
     // SELECT close from stocks WHERE symbol = $1 AND timestamp = $2;
     // ? StockHolding: Add stock to portfolio
     // INSERT INTO stock_holding (portfolio_id, userid, stock_symbol, timestamp, time_of_purchase, num_shares) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+    // INSERT INTO transaction (portfolioid, userid, stock_symbol, timestamp, time_of_purchase, total_cost, num_shares_purchased) VALUES ($1, $2, $3, $4, now(), $5, $6) RETURNING *;
+    app.post('/stockholding/:portfolioid/:userid', async (req, res) => {
+        try {
+            const { portfolioid, userid } = req.params;
+            const { stock_symbol, timestamp, num_shares } = req.body;
+            const newStockHolding = await pool.query('INSERT INTO stock_holding (portfolioid, userid, stock_symbol, timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *', [portfolioid, userid, stock_symbol, timestamp, num_shares]);
+            res.json(newStockHolding.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+
+// ! Transactions
+// ? Transaction: Get all transactions
+app.get("/transactions/:portfolioid/:userid", async (req, res) => {
+    try {
+        const { portfolioid, userid } = req.params;
+        const allTransactions = await pool.query("SELECT * FROM transaction WHERE portfolioid = $1 AND userid = $2", [portfolioid, userid]);
+        res.json(allTransactions.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+// ? Transaction: Post a transaction
+app.post("/transactions", async (req, res) => {
+    try {
+        const { portfolioid, userid, stock_symbol, timestamp, total_cost, num_shares } = req.body;
+        const newTransaction = await pool.query("INSERT INTO transaction (portfolioid, userid, stock_symbol, timestamp, time_of_purchase, total_cost, num_shares_purchased) VALUES ($1, $2, $3, $4, now(), $5, $6) RETURNING *", [portfolioid, userid, stock_symbol, timestamp, total_cost, num_shares]);
+        res.json(newTransaction.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 
 // ! STOCKS PAGE
 // SELECT * FROM stocks WHERE symbol = $1 AND timestamp = $2;

@@ -9,6 +9,7 @@ import Stocks from './pages/FullStocks';
 import PortfolioList from './pages/PortfolioList';
 import StockLists from './pages/StockLists';
 import SingleStockList from './pages/SingleStockList';
+import StockTransaction from './pages/StockTransaction';
 
 export default function App() {
     return (
