@@ -1,39 +1,48 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SingleResult from './SingleResult';
 import './StocksStockHolding.css';
 
 export default function List({ stocklist }) {
     const [latestStocks, setLatestStocks] = useState([]);
+    const searchBarRef = useRef(null);
+    const searchButtonRef = useRef(null);
+
     useEffect(() => {
-        (async () => {
+        const searchbar = searchBarRef.current;
+        const searchButton = searchButtonRef.current;
+        
+        const handleClick = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/lateststocks`);
+                const response = await fetch(`http://localhost:5000/lateststocks/${searchbar.value}`);
                 const jsonData = await response.json();
                 setLatestStocks(jsonData);
             } catch (err) {
                 console.error(err.message);
             }
-        })();
-    });
+        };
 
-    //search
-    // const response = await fetch(`http://localhost:5000/lateststocks/${search}`);
+        searchButton.addEventListener('click', handleClick);
 
+        return () => {
+            searchButton.removeEventListener('click', handleClick);
+        };
+    }, []);
+    
     return(
         <div>
             <h1 className='title'>Add Stocks to Stock Holding</h1>
             <div className='search'>
                 <h2 className='stockheader'> Search for Stocks</h2>
                 <div className='searc'>
-                    <input classname='inputbar' placeholder="Enter a symbol" type='text'></input>
-                    <button className='searchButton'>Search</button>
+                    <input classname='inputbar' placeholder="Enter a symbol" type='text' ref={searchBarRef}></input>
+                    <button className='searchButton' ref={searchButtonRef}>Search</button>
                 </div>
                 <button onClick={() => stocklist(false)}>Back</button>
             </div>
             <div style={{ height: '500px', overflowY: 'scroll' }}>
             <h2>Results</h2>
                 <table>
-                    <thread>
+                    <thead>
                         <tr>
                             <th scope="col">Stock Symbol</th>
                             <th scope="col">Stock Timestamp</th>
@@ -41,7 +50,7 @@ export default function List({ stocklist }) {
                             <th scope="col">Volume</th>
                             <th scope="col">Add to Stock Holding</th>
                         </tr>
-                    </thread>
+                    </thead>
                     <tbody className='stocks'>
                         {latestStocks.map((stock) => (
                             <SingleResult stock={stock}/>
