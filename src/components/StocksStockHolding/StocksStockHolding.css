@@ -68,3 +68,23 @@ td:last-of-type {
 tbody > tr:nth-of-type(even) {
     background-color: rgb(237 238 242);
 }
+
+.searc {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.searchButton {
+    border: 1px solid white;
+    background-color: rgb(0 0 0 / 0%);
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
