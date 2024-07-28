@@ -1,0 +1,36 @@
+
+.title {
+  margin-left: 50px;
+}
+
+.container {
+  background-color: #809A91;
+  padding: 20px;
+  width: 75%;
+  margin: 0 auto;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.stockList {
+  background-color: white;
+  padding: 50px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.editButton {
+  background-color: #1E5945;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px; 
+  cursor: pointer;
+}
+
+.editButton:hover {
+  background-color: #007233;
+}

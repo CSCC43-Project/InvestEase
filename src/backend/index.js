@@ -319,8 +319,19 @@ app.get('/stocklists/:uid/:ownerid', async (req, res) => {
         console.error(error.message);
     }
 });
+
 // ? StockList: Get all stock_list from a specific user
 // SELECT * FROM stock_list WHERE ownerID = $1;
+app.get('/stocklists/:ownerid', async (req, res) => {
+    try {
+        const { ownerid } = req.params;
+        const stockLists = await pool.query('SELECT * FROM stock_list WHERE ownerid = $1', [ownerid]);
+        res.json(stockLists.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 // ? StockList: Add a stock_list
 // INSERT INTO stock_list (ownerID, stocklistid, is_public) VALUES ($1, $2, $3) RETURNING *;
 // ? StockList: Get all stocklists for a specifc user that are public

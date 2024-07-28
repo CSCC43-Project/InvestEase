@@ -15,6 +15,11 @@ export default function UserProfile() {
     function handlePortfolio(){
         navigate('/portfolio');
     }
+
+    function handleStockLists(){
+        navigate('/stocklists');
+    }
+    
     const getUserInfo = async () => {
         try {
             const response = await fetch(`http://localhost:5000/users/${uid}`);
@@ -66,7 +71,7 @@ export default function UserProfile() {
                 <FriendList />
                 <div className='doing-stuff'>
                     <button onClick={handlePortfolio}>Access Portfolios</button>
-                    <button>Manage Stock List</button>
+                    <button onClick={handleStockLists}>Manage Stock List</button>
                     <button>Analyze Performance</button>
                     <button onClick={() => setOpenSearch(true)}>Add Friends</button>
                 </div>
