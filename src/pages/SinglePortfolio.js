@@ -3,6 +3,7 @@ import StockHoldingList from '../components/StockHolding/StockHoldingList';
 import '../components/Portfolio.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import List from '../components/StocksStockHolding/List';
 
 export default function SinglePortfolio() {
     const uid = localStorage.getItem('userid');
@@ -10,7 +11,9 @@ export default function SinglePortfolio() {
     const [userInfo, setUserInfo] = useState([]);
     const [portfolioInfo, setPortfolioInfo] = useState([]);
     const [marketValue, setMarketValue] = useState(10);
+    // set marketValue
     const [amount, setAmount] = useState(0);
+    const [openStocks, setOpenStocks] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -58,6 +61,14 @@ export default function SinglePortfolio() {
         updateCash(portfolioInfo.cash_account - amount);
     }
 
+    if (openStocks) {
+        return (
+            <div>
+                <Header profile={true}/>
+                <List stocklist={setOpenStocks}/>
+            </div>
+        );
+    }
     return (
         <div>
             <Header profile={true} />
@@ -85,7 +96,7 @@ export default function SinglePortfolio() {
                 <StockHoldingList cashAccount={portfolioInfo.cash_account} portfolioID={portfolioID} />
             </div>
             <button className='trans-history'>View Stock Transaction List</button>
-            <button className='add-stocks'>Add Stocks to Holdings</button>
+            <button className='add-stocks' onClick={() => setOpenStocks(true)}>Add Stocks to Holdings</button>
         </div>
     );
 }
