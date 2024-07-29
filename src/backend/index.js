@@ -395,6 +395,17 @@ app.get('/stocklists/:ownerid', async (req, res) => {
     }
 });
 
+app.put('/stocklists/updatevisibility/:stocklistid/:userid', async (req, res) => {
+    try {
+        const { stocklistid, userid } = req.params;
+        const { is_public } = req.body;
+        const updateStockList = await pool.query('UPDATE stock_list SET is_public = $1 WHERE stocklistid = $2 AND ownerid = $3 RETURNING *', [is_public, stocklistid, userid]);
+        res.json(updateStockList.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 // ? StockList: Add a stock_list
 // INSERT INTO stock_list (ownerID, stocklistid, is_public) VALUES ($1, $2, $3) RETURNING *;
 app.post('/stocklists/:ownerid', async (req, res) => {
@@ -444,7 +455,16 @@ app.post("stocklistitem/:stocklistid/:ownerid", async (req, res) => {
 });
 
 // ! SHAREDSTOCKLIST PAGE
-
+app.post("/sharedstocklist/:stocklistid/:ownerid", async (req, res) => {
+    try {
+        const { stocklistid, ownerid } = req.params;
+        const { shared_userid } = req.body;
+        const newSharedStockList = await pool.query("INSERT INTO shared_stock_list (stocklistid, ownerid, shared_userid) VALUES ($1, $2, $3) RETURNING *", [stocklistid, ownerid, shared_userid]);
+        res.json(newSharedStockList.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 
 // ! REVIEW PAGE
 
