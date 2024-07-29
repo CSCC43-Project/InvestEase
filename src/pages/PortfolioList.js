@@ -32,8 +32,10 @@ export default function PortfolioList() {
             <div className='portfolios'>
                 {portfolioList.map((portfolio) => (
                     <div className = "single-portfolio" onClick = {() => handleClick(portfolio.portfolioid)} key={portfolio.portfolioid}>
-                        <h2>{portfolio.portfolioid}</h2>
-                        <p>{portfolio.cash_account}</p>
+                        <div>
+                            <h2>Portfolio: {portfolio.portfolioid}</h2>
+                            <p>Cash Account: ${portfolio.cash_account}</p>
+                        </div>
                         <button> Edit Portfolio </button>
                     </div>
                 ))}

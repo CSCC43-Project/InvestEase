@@ -1,0 +1,117 @@
+.stock-list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .stock-list-title{
+    color: black;
+    font-size: 25px;
+    margin-left: 50px;
+  }
+
+  .stock-list-title.visible{
+    color: #1E5945;
+  }
+
+  .stock-list-title.hidden{
+    color: #7c2727;
+  }
+
+
+  .toggleContainer {
+    display: flex;
+    align-items: center;
+  }
+  
+  .toggle-container {
+    position: relative;
+    width: 100px;
+    height: 42px;
+    background-color: white;  
+    border-radius: 30px;
+    cursor: pointer;
+    margin: 20px;
+  }
+
+  .toggle-container.visible{
+    background-color: #04AA6D;
+  }
+
+  .toggle-container.hidden{
+    background-color: #8b4a4a;
+  }
+  
+  .toggle-button {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+  }
+  
+  .toggle-button.visible {
+    transform: translateX(58px);
+  }
+  
+  .toggle-button.hidden {
+    transform: translateX(0);
+  }
+  
+  .share-button {
+    background-color:#1E5945;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 20px 30px;
+    border-radius: 10px; 
+    margin: 20px;
+  }
+
+  .add-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .add-button{
+    background-color:#1E5945;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 20px 30px;
+    border-radius: 10px; 
+    margin: 20px;
+  }
+
+  .review-title {
+    color: black;
+    font-size: 25px;
+    margin-left: 50px;
+  }
+
+  .reviews {
+    background-color: #809A91;
+    padding: 20px;
+    width: 75%;
+    margin: 0 auto;
+    border-radius: 5px;
+    box-shadow: none;
+  }
+
+  .review-item {
+    background-color: white;
+    padding-top: 1px;
+    padding-left: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+    border-radius: 5px;
+  }
+
+  .review-text {
+    color: rgb(0, 0, 0);
+    font-weight: lighter;
+    padding-left: 25px;
+    padding-right: 25px;
+  }

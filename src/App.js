@@ -9,6 +9,7 @@ import Stocks from './pages/FullStocks';
 import PortfolioList from './pages/PortfolioList';
 import StockLists from './pages/StockLists';
 import SingleStockList from './pages/SingleStockList';
+import AnotherStockList from './pages/AnotherStockList';
 
 export default function App() {
     return (
@@ -21,8 +22,9 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/profile/:id" element={<AnotherProfile />} />
-                <Route path="/stocklists" element={<StockLists />} />
-                <Route path="/stocklists/:id" element={<SingleStockList />} />
+                <Route path="/mystocklists" element={<StockLists />} />
+                <Route path="/mystocklists/:id" element={<SingleStockList />} />
+                <Route path='/userstocklist/:ownerid/:listid' element={<AnotherStockList />} />
                 <Route path="/portfolio" element={<PortfolioList />} />
                 <Route path="/portfolio/:id" element={<SinglePortfolio />} />
                 <Route path="/stocks" element={<Stocks/>} />

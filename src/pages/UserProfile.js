@@ -17,7 +17,7 @@ export default function UserProfile() {
     }
 
     function handleStockLists(){
-        navigate('/stocklists');
+        navigate('/mystocklists');
     }
     
     const getUserInfo = async () => {

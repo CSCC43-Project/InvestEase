@@ -6,6 +6,7 @@ export default function StockList() {
     const uid = localStorage.getItem('userid');
     let ownerid = useParams().id;
     const [stocklists, setStocklists] = useState([]);
+    
     useEffect(() => {
         (async () => {
             try {
@@ -18,10 +19,12 @@ export default function StockList() {
         })();
     });
     return (
-        <div style={{ overflowY: 'scroll', height: '300px' }}>
+        <div>
             {stocklists.map((stocklist) => (
-                <Stock key={stocklist.stocklist_id} stocklist={stocklist} />
-            ))}
+                <div>
+                    <Stock key={stocklist.stocklist_id} ownerid={ownerid} stocklist={stocklist} />
+                </div>
+                ))}
         </div>
     );
 }

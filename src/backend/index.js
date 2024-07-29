@@ -348,6 +348,16 @@ app.get('/stocklists/:ownerid', async (req, res) => {
 // SELECT * FROM stock_list WHERE ownerID = $1 AND is_public = true;
 // ? StockListItem: Get all stock_list_items from a specific user and stock list
 // SELECT * FROM stock_list_item WHERE ownerID = $2 AND stocklistid = $3;
+app.get('/stocklistitems/:ownerid/:stockListId', async (req, res) => {
+    try {
+        const { ownerid, stockListId } = req.params;
+        const stockLists = await pool.query('SELECT * FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2;', [ownerid, stockListId]);
+        res.json(stockLists.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 // ? StockListItem: Add an item to a specific stock_list
 // INSERT INTO stock_list_items (stocklistid, ownerid, stock_symbol, stock_timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *;
 
@@ -355,6 +365,17 @@ app.get('/stocklists/:ownerid', async (req, res) => {
 
 
 // ! REVIEW PAGE
+app.get('/ownerreviews/:ownerid/:stockListId', async (req, res) => {
+    try {
+        const { ownerid, stockListId } = req.params;
+        const reviews = await pool.query(
+            'SELECT users.username, review.review_text FROM review JOIN users ON review.reviewerid = users.userid WHERE review.ownerid = $1 AND review.stocklistid = $2;'
+            , [ownerid, stockListId]);
+        res.json(reviews.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 
 
 

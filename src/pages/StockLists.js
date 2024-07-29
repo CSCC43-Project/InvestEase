@@ -9,7 +9,7 @@ export default function StockLists(){
     const [stockLists, setStockLists] = useState([]);
 
     function handleClick(listId) {
-        navigate(`/stocklists/${listId}`)
+        navigate(`/mystocklists/${listId}`)
     }
 
     useEffect(() => {
@@ -34,7 +34,7 @@ export default function StockLists(){
             <div className="container">
                 {stockLists.map((stocklist) => (
                     <div className="stockList">
-                        <h2>{stocklist.stocklistid}</h2>
+                        <h2>Stock List: {stocklist.stocklistid}</h2>
                         <button className="editButton" onClick={() => handleClick(stocklist.stocklistid)}>Edit list</button>
                     </div>
                 ))}
