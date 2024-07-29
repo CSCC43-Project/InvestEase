@@ -429,6 +429,16 @@ app.post('/stocklists/:ownerid', async (req, res) => {
     }
 });
 
+app.delete('/stocklists/:ownerid/:stocklistid', async (req, res) => {
+    try {
+        const { ownerid, stocklistid } = req.params;
+        const deleteStockList = await pool.query('DELETE FROM stock_list WHERE ownerid = $1 AND stocklistid = $2', [ownerid, stocklistid]);
+        res.json(deleteStockList.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 app.get("/stocklistcount/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -505,6 +515,26 @@ app.get('/reviews/:ownerid/:stocklistid', async (req, res) => {
         const { ownerid, stocklistid } = req.params;
         const reviews = await pool.query('select reviewerid, stocklistid, ownerid, review_text, username, profilepic_url from review join users on review.reviewerid = users.userid WHERE review.stocklistid = $2 and review.ownerid = $1;', [ownerid, stocklistid]);
         res.json(reviews.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.delete('/reviews/:ownerid/:stocklistid/:reviewerid', async (req, res) => {
+    try {
+        const { ownerid, stocklistid, reviewerid } = req.params;
+        const deleteReview = await pool.query('DELETE FROM review WHERE ownerid = $1 AND stocklistid = $2 AND reviewerid = $3', [ownerid, stocklistid, reviewerid]);
+        res.json(deleteReview.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.delete("/allreviews/:ownerid/:stocklistid", async (req, res) => {
+    try{
+        const { ownerid, stocklistid } = req.params;
+        const deleteReviews = await pool.query('DELETE FROM review WHERE ownerid = $1 AND stocklistid = $2', [ownerid, stocklistid]);
+        res.json(deleteReviews.rows);
     } catch (error) {
         console.error(error.message);
     }
