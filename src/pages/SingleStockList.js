@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import { useEffect, useState } from 'react';
 import "./SingleStockList.css"
 import ShareSearch from '../components/SearchFriends/ShareSearch';
-
+import { useNavigate } from 'react-router-dom';
 
 
 export default function SingleStockList(){
@@ -14,6 +14,7 @@ export default function SingleStockList(){
     const [stockListItems, setStockListItems] = useState([]);
     const [reviewsList, setReviewsList] = useState([]);
     const [openSearch, setOpenSearch] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         ( async () => {
@@ -67,6 +68,38 @@ export default function SingleStockList(){
         })();
     }, []);
 
+    const deleteReview = (reviewId) => {
+        (async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/reviews/${uid}/${listId}/${reviewId}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                setReviewsList(reviewsList.filter((review) => review.reviewid !== reviewId));
+                window.location.reload();
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    };
+
+    const deleteStockList = () => {
+        (async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/allreviews/${uid}/${listId}`, {
+                    method: 'DELETE'
+                });
+                const response = await fetch(`http://localhost:5000/stocklists/${uid}/${listId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                navigate('/mystocklists');
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    };
+
     if (openSearch) {
         return (
             <div>
@@ -80,6 +113,7 @@ export default function SingleStockList(){
             <Header profile={true}></Header>
             <div className="stock-list">
                 <h1 className='stock-list-title'>Stock List: {listId}</h1>
+                <button style={{background: "red"}} onClick={() => deleteStockList()}>Delete Stock List</button>
                 <div className="toggleContainer">
                     {isVisible === false && (
                         <button className="share-button" onClick={() => setOpenSearch(true)}>Share</button>
@@ -135,7 +169,7 @@ export default function SingleStockList(){
                                 <img className='profile-pic' src={review.profilepic_url}></img>
                                 <h3 className='reviewer-name'>{review.username}</h3>
                             </div>
-                            <button className='delete-review'>Delete</button>
+                            <button className='delete-review' onClick={() => deleteReview(review.reviewerid)}>Delete</button>
                         </div>
                         <h4 className='review-text'>{review.review_text}</h4>
                     </div>
