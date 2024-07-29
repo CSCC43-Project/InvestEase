@@ -217,6 +217,25 @@ app.post('/checkLogin', async (req, res) => {
 // ! USERS PORTFOLIOS
     // ? Portfolio: Create new portfolio
     // INSERT INTO portfolios (userid, portfolio_name, cash_account) VALUES ($1, $2, $3) RETURNING *;
+    app.post('/portfolios/:id', async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { portfolioid } = req.body;
+            const newPortfolio = await pool.query('INSERT INTO portfolio (userid, portfolioid, cash_account) VALUES ($1, $2, 0) RETURNING *', [id, portfolioid]);
+            res.json(newPortfolio.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+    app.get("/portfoliocount/:id", async (req, res) => {
+        try {
+            const { id } = req.params;
+            const portfolioCount = await pool.query("SELECT COUNT(*) FROM portfolio WHERE userid = $1", [id]);
+            res.json(portfolioCount.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
     // ? Portfolio: Get all portfolios
     // SELECT * FROM portfolios WHERE userid = $1;
     app.get('/portfolios/:id', async (req, res) => {
@@ -378,12 +397,51 @@ app.get('/stocklists/:ownerid', async (req, res) => {
 
 // ? StockList: Add a stock_list
 // INSERT INTO stock_list (ownerID, stocklistid, is_public) VALUES ($1, $2, $3) RETURNING *;
+app.post('/stocklists/:ownerid', async (req, res) => {
+    try {
+        const { ownerid } = req.params;
+        const { stocklistid } = req.body;
+        const newStockList = await pool.query('INSERT INTO stock_list (ownerid, stocklistid, is_public) VALUES ($1, $2, FALSE) RETURNING *', [ownerid, stocklistid]);
+        res.json(newStockList.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get("/stocklistcount/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const stockListCount = await pool.query("SELECT COUNT(*) FROM stock_list WHERE ownerid = $1", [id]);
+        res.json(stockListCount.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 // ? StockList: Get all stocklists for a specifc user that are public
 // SELECT * FROM stock_list WHERE ownerID = $1 AND is_public = true;
 // ? StockListItem: Get all stock_list_items from a specific user and stock list
 // SELECT * FROM stock_list_item WHERE ownerID = $2 AND stocklistid = $3;
+app.get('/stocklistitems/:stocklistid/:ownerid', async (req, res) => {
+    try {
+        const { stocklistid, ownerid } = req.params;
+        const stockListItems = await pool.query('SELECT * FROM stock_list_item WHERE ownerid = $2 AND stocklistid = $1', [stocklistid, ownerid]);
+        res.json(stockListItems.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 // ? StockListItem: Add an item to a specific stock_list
 // INSERT INTO stock_list_items (stocklistid, ownerid, stock_symbol, stock_timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *;
+app.post("stocklistitem/:stocklistid/:ownerid", async (req, res) => {
+    try {
+        const { stocklistid, ownerid } = req.params;
+        const { stock_symbol, stock_timestamp, num_shares } = req.body;
+        const newStockListItem = await pool.query("INSERT INTO stock_list_item (stocklistid, ownerid, stock_symbol, stock_timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *", [stocklistid, ownerid, stock_symbol, stock_timestamp, num_shares]);
+        res.json(newStockListItem.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 
 // ! SHAREDSTOCKLIST PAGE
 

@@ -18,6 +18,22 @@ export default function PortfolioList() {
             }
         })();
     }, []);
+
+    async function addPortfolio() {
+        try {
+            const res = await fetch(`http://localhost:5000/portfoliocount/${uid}`);
+            const json = await res.json();
+            const response = await fetch(`http://localhost:5000/portfolios/${uid}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ portfolioid: Number(json.count) + 1 })
+            });
+            const jsonData = await response.json();
+            window.location.reload();
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
     
     function handleClick(id) {
         navigate(`/portfolio/${id}`);
@@ -27,7 +43,7 @@ export default function PortfolioList() {
             <Header profile={true}/>
             <div className='portfolio-info'>
                 <h1 className='portfolio-title'>Portfolio List</h1>
-                <button className='portfolio-add-button'>Add Portfolio List</button>
+                <button className='portfolio-add-button' onClick={() => addPortfolio()}>Add Portfolio List</button>
             </div>
             <div className='portfolios'>
                 {portfolioList.map((portfolio) => (
