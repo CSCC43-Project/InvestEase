@@ -57,7 +57,7 @@ export default function UserProfile() {
     }
     return (
         <div>
-            <Header settings={true}/>
+            <Header logout={true}/>
             <div className='user'>
                 <img className="profilepic" src={userInfo.profilepic_url}></img>
                 <div className='user-info'>

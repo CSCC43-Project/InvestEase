@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
-function Header({profile}) {
+function Header({profile, logout}) {
     const navigate = useNavigate();
 
     function handleProfile(){
@@ -12,12 +12,19 @@ function Header({profile}) {
         navigate('/home');
     }
 
+    function handleLogout(){
+        navigate('/login');
+    }
+
     return (
         <header className="header">
             <h1 onClick={handleHome}>InvestEase</h1>
             <nav>
                 {profile === true && (
                     <button className="header-button" onClick={handleProfile}>Profile</button>
+                )}
+                {logout === true && (
+                    <button className="header-button" onClick={handleLogout}>Logout</button>
                 )}
             </nav>
         </header>

@@ -104,8 +104,6 @@
     background-color: white;
     margin-bottom: 25px;
     border-radius: 5px;
-    display: flex;
-    align-items: center;
     border: 1px solid #1E5945;
     height: auto;
   }
@@ -121,6 +119,7 @@
     overflow-wrap: break-word;
     word-wrap: break-word;
     word-break: break-all;
+    margin-left: 20px;
   }
 
   .profile-pic {
@@ -144,3 +143,43 @@
     margin-right: 20px;
   }
   
+  .review-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .delete-review {
+    background-color: #1E5945;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 20px;
+  }
+
+  .edit-review {
+    background-color: #1E5945;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 20px;
+  }
+
+  .empty-text-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .empty-text {
+    color: rgb(68, 65, 65);
+    font-size: 15px;
+  }
+

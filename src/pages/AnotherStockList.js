@@ -38,7 +38,7 @@ export default function AnotherStockList(){
     useEffect(() => {
         ( async () => {
             try {
-                const res = await fetch(`http://localhost:5000/ownerreviews/${ownerid}/${listId}`);
+                const res = await fetch(`http://localhost:5000/reviews/${ownerid}/${listId}`);
                 const data = await res.json();
                 setReviewsList(data);
             } catch (error) {
@@ -67,11 +67,36 @@ export default function AnotherStockList(){
                     ))}
                 </tbody>
             </table>
+
+            <div className='empty-text-container'>
+                { stockListItems == 0 && (
+                    <h1 className='empty-text'>There are no stocks in this list.</h1>
+                )}
+            </div>
+
             <div className='reviews'>
                 <h2 className='review-title'>Reviews</h2>
+                <div className='empty-text-container'>
+                    { reviewsList == 0 && (
+                        <h1 className='empty-text'>There are no reviews for this list.</h1>
+                    )}
+                </div>
                 {reviewsList.map((review) => (
                     <div className='review-item'>
-                        <h3>Username: {review.username}</h3>
+                        <div className='review-bar'>
+                            <div className='reviewer-info'>
+                                <img className='profile-pic' src={review.profilepic_url}></img>
+                                <h3 className='reviewer-name'>{review.username}</h3>
+                            </div>
+                            <div>
+                                {review.reviewerid == uid && (
+                                    <div>
+                                        <button className='edit-review'>Edit</button>
+                                        <button className='delete-review'>Delete</button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                         <h4 className='review-text'>{review.review_text}</h4>
                     </div>
                 ))}
