@@ -20,9 +20,10 @@ export default function StockHolding({ stock, cashAccount }) {
     }
     function confirmSale() {
         setConfirm(true);
-        setTempAmount(0);
         updateShares(stock.num_shares + tempAmount);
         updateCash(cashAccount - cost);
+        createTransaction();
+        setTempAmount(0);
         setCost(0);
     }
     function rejectSale() {
@@ -72,6 +73,19 @@ export default function StockHolding({ stock, cashAccount }) {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ num_shares: amount, stock_symbol: stock.stock_symbol, timestamp: stock.timestamp })
+            });
+            const jsonData = await response.json();
+            window.location.reload();
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+    async function createTransaction() {
+        try {
+            const response = await fetch(`http://localhost:5000/transactions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ portfolioid: stock.portfolioid, userid: uid, stock_symbol: stock.stock_symbol, timestamp: stock.timestamp, total_cost: cost, num_shares: tempAmount })
             });
             const jsonData = await response.json();
             window.location.reload();

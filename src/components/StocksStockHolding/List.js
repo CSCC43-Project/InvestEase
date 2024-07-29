@@ -8,6 +8,19 @@ export default function List({ stocklist }) {
     const searchButtonRef = useRef(null);
 
     useEffect(() => {
+        const getLatestStocks = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/lateststocks');
+                const jsonData = await response.json();
+                setLatestStocks(jsonData);
+            } catch (err) {
+                console.error(err.message);
+            }
+        };
+
+        getLatestStocks();
+    }, []);
+    useEffect(() => {
         const searchbar = searchBarRef.current;
         const searchButton = searchButtonRef.current;
         
