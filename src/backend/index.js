@@ -395,9 +395,19 @@ app.get('/stocklists/:ownerid', async (req, res) => {
     }
 });
 
-app.put('/stocklists/updatevisibility/:stocklistid/:userid', async (req, res) => {
+app.get('/mystocklistinfo/:uid/:stocklistid', async (req, res) => {
     try {
-        const { stocklistid, userid } = req.params;
+        const { uid, stocklistid } = req.params;
+        const stockList = await pool.query('SELECT * FROM stock_list WHERE ownerid = $1 AND stocklistid = $2', [uid, stocklistid]);
+        res.json(stockList.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.put('/stocklists/updatevisibility/:userid/:stocklistid', async (req, res) => {
+    try {
+        const { userid, stocklistid } = req.params;
         const { is_public } = req.body;
         const updateStockList = await pool.query('UPDATE stock_list SET is_public = $1 WHERE stocklistid = $2 AND ownerid = $3 RETURNING *', [is_public, stocklistid, userid]);
         res.json(updateStockList.rows);
@@ -455,6 +465,17 @@ app.post("stocklistitem/:stocklistid/:ownerid", async (req, res) => {
 });
 
 // ! SHAREDSTOCKLIST PAGE
+// ? SharedStockList: Get all of the friends of the owner of the stocklist - friends that the stocklist is already shared with
+app.get('/sharedstocklist/:stocklistid/:ownerid', async (req, res) => {
+    try {
+        const { stocklistid, ownerid } = req.params;
+        const sharedStockList = await pool.query('SELECT friendid FROM friends_list WHERE ownerid = $2 EXCEPT SELECT shared_userid FROM shared_stock_list WHERE stocklistid = $1 AND ownerid = $2', [stocklistid, ownerid]);
+        res.json(sharedStockList.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+// ? SharedStockList: Share a stocklist with a friend
 app.post("/sharedstocklist/:stocklistid/:ownerid", async (req, res) => {
     try {
         const { stocklistid, ownerid } = req.params;
@@ -479,7 +500,15 @@ app.get('/ownerreviews/:ownerid/:stockListId', async (req, res) => {
     }
 });
 
-
+app.get('/reviews/:ownerid/:stocklistid', async (req, res) => {
+    try {
+        const { ownerid, stocklistid } = req.params;
+        const reviews = await pool.query('select reviewerid, stocklistid, ownerid, review_text, username, profilepic_url from review join users on review.reviewerid = users.userid WHERE review.stocklistid = $2 and review.ownerid = $1;', [ownerid, stocklistid]);
+        res.json(reviews.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 
 // ! USERS
 // ? Get all users

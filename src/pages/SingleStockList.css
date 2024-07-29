@@ -102,11 +102,12 @@
 
   .review-item {
     background-color: white;
-    padding-top: 1px;
-    padding-left: 20px;
-    padding-bottom: 20px;
     margin-bottom: 25px;
     border-radius: 5px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #1E5945;
+    height: auto;
   }
 
   .review-text {
@@ -114,4 +115,32 @@
     font-weight: lighter;
     padding-left: 25px;
     padding-right: 25px;
+    align-items: center;
+    height: auto;
+    width: auto;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
   }
+
+  .profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+
+  .reviewer-info{
+    display: flex;
+    align-items: center;
+    margin: 10px;
+    background-color: #6cac977a;
+    border-radius: 5px;
+    width: 300px;
+  }
+
+  .reviewer-name {
+    margin-right: 20px;
+  }
+  
