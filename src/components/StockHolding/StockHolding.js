@@ -4,7 +4,7 @@ import { getMV, setMV, addMV } from './PresentMarketValue';
 
 export default function StockHolding({ stock, cashAccount, marketValue, setMarketValue }) {
     const uid = localStorage.getItem('userid');
-    const [amount, setAmount] = useState(500);
+    const [amount, setAmount] = useState(stock.num_shares);
     const [tempAmount, setTempAmount] = useState(0);
     const [stockPrice, setStockPrice] = useState(0);
     const [latestStockPrice, setLatestStockPrice] = useState(0);
@@ -16,8 +16,11 @@ export default function StockHolding({ stock, cashAccount, marketValue, setMarke
         setCost((tempAmount + 1) * latestStockPrice);
     }
     function sell() {
-        setTempAmount(tempAmount - 1);
-        setCost((tempAmount - 1) * latestStockPrice);
+        if(amount != 0) {
+            setTempAmount(tempAmount - 1);
+            setAmount(amount - 1);
+            setCost((tempAmount - 1) * latestStockPrice);
+        }
     }
     function confirmSale() {
         setConfirm(true);
