@@ -439,6 +439,12 @@ app.put('/stocklists/updatevisibility/:userid/:stocklistid', async (req, res) =>
     }
 });
 
+app.get('/listvisibility/:ownerId/:listId', async (req, res) => {
+    const { ownerId, listId } = req.params;
+    const listVisibility = await pool.query('SELECT is_public FROM stock_list WHERE ownerid=$1 AND stocklistid=$2', [ownerId, listId]);
+    res.json(listVisibility.rows[0])
+});
+
 // ? StockList: Add a stock_list
 // INSERT INTO stock_list (ownerID, stocklistid, is_public) VALUES ($1, $2, $3) RETURNING *;
 app.post('/stocklists/:ownerid', async (req, res) => {
@@ -578,6 +584,16 @@ app.delete("/allreviews/:ownerid/:stocklistid", async (req, res) => {
         const { ownerid, stocklistid } = req.params;
         const deleteReviews = await pool.query('DELETE FROM review WHERE ownerid = $1 AND stocklistid = $2', [ownerid, stocklistid]);
         res.json(deleteReviews.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get("/myreview/:ownerid/:listid/:myid", async (req, res) => {
+    try{
+        const { ownerid, listid, myid } = req.params;
+        const getReview = await pool.query('SELECT * FROM review WHERE ownerid = $1 AND stocklistid = $2 AND reviewerid = $3', [ownerid, listid, myid]);
+        res.json(getReview.rows);
     } catch (error) {
         console.error(error.message);
     }
