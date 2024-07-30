@@ -5,6 +5,7 @@ import '../components/Portfolio.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import List from '../components/StocksStockHolding/List';
+import SingleStock from '../components/FullStockInfo/SingleStock';
 
 export default function SinglePortfolio() {
     const uid = localStorage.getItem('userid');
@@ -15,6 +16,8 @@ export default function SinglePortfolio() {
     const [openStocks, setOpenStocks] = useState(false);
     const [openTransaction, setOpenTransaction] = useState(false);
     const [marketValue, setMarketValue] = useState(0);
+    const [openAnalytics, setOpenAnalytics] = useState(false);
+    const [mySymbol, setStockSymbol] = useState('');
 
     useEffect(() => {
         (async () => {
@@ -93,6 +96,13 @@ export default function SinglePortfolio() {
             </div>
         );
     }
+    if (openAnalytics) {
+        return (
+            <div>
+                <SingleStock closeStockInfo={setOpenAnalytics} stockSymbol={mySymbol} />
+            </div>
+        );
+    }
     return (
         <div>
             <Header profile={true} />
@@ -117,7 +127,7 @@ export default function SinglePortfolio() {
             </div>
             <div>
                 <h1 style={{ color: 'white', paddingTop: 20 }}>Stock Holdings</h1>
-                <StockHoldingList cashAccount={portfolioInfo.cash_account} portfolioID={portfolioID} />
+                <StockHoldingList cashAccount={portfolioInfo.cash_account} portfolioID={portfolioID} openA={setOpenAnalytics} symbol = {setStockSymbol}/>
             </div>
             <button className='trans-history' onClick={() => setOpenTransaction(true)}>View Stock Transaction List</button>
             <button className='add-stocks' onClick={() => setOpenStocks(true)}>Add Stocks to Holdings</button>

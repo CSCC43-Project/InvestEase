@@ -62,3 +62,19 @@
 .reject:hover {
     background-color: #9f2017;
 }
+
+.col-analytics {
+    width: 100px
+}
+
+.analytics-button {
+    background-color: #1E5945;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 20px;
+    margin-left: 20px;
+}

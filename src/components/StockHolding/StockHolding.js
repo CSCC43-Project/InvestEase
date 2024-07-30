@@ -1,7 +1,8 @@
 import './StockHolding.css';
 import { useEffect, useState } from 'react';
+import SingleStock from '../FullStockInfo/SingleStock';
 
-export default function StockHolding({ stock, cashAccount }) {
+export default function StockHolding({ stock, cashAccount, openAnalytics, stockSymbol }) {
     const uid = localStorage.getItem('userid');
     const [amount, setAmount] = useState(stock.num_shares);
     const [tempAmount, setTempAmount] = useState(0);
@@ -96,8 +97,16 @@ export default function StockHolding({ stock, cashAccount }) {
             console.error(err.message);
         }
     }
-    return(
+
+    function handleClick () {
+        openAnalytics(true);
+        stockSymbol(stock.stock_symbol);
+    }
+    return (
         <tr>
+            <td>
+                <button className = 'analytics-button' onClick={() => handleClick()}>View</button>
+            </td>
             <th scope="row">{stock.stock_symbol}</th>
             <td>{stock.num_shares}</td>
             <td>{stockPrice}</td>

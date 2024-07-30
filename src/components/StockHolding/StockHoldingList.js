@@ -2,7 +2,7 @@ import './StockHoldingList.css';
 import StockHolding from './StockHolding';
 import { useState, useEffect } from 'react';
 
-export default function StockHoldingList({ cashAccount, portfolioID }) {
+export default function StockHoldingList({ cashAccount, portfolioID, openA, symbol }) {
     const uid = localStorage.getItem('userid');
     const [stockHoldings, setStockHoldings] = useState([]);
     useEffect(() => {
@@ -20,6 +20,7 @@ export default function StockHoldingList({ cashAccount, portfolioID }) {
     <table>
         <thead>
             <tr>
+                <th className = 'col-analytics' scope="col">Analytics</th>
                 <th scope="col">Stock Symbol</th>
                 <th scope="col">Amount Owned</th>
                 <th scope="col">Price when Bought</th>
@@ -32,7 +33,7 @@ export default function StockHoldingList({ cashAccount, portfolioID }) {
         </thead>
         <tbody className='stocks'>
             {stockHoldings.map((stock) => (
-                <StockHolding key={stock.stockid} stock={stock} cashAccount={cashAccount} />
+                <StockHolding key={stock.stockid} stock={stock} cashAccount={cashAccount} openAnalytics={openA} stockSymbol={symbol}/>
             ))}
         </tbody>
     </table>
