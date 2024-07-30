@@ -57,3 +57,11 @@
 .container .footer .cancel-btn {
     background-color: red;
 }
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    margin-inline: auto;
+}

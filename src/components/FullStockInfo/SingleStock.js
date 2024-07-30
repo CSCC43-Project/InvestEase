@@ -1,21 +1,25 @@
 import React from "react";
 import './SingleStock.css';
-import { stockInformation } from "./StockInfo";
+import Graph from '../Analytics/Graph';
 
-export default function SingleStock({ closeStockInfo }) {
+export default function SingleStock({ closeStockInfo, stockSymbol }) {
     return (
         <div className="background">
             <div className="container">
                 <div className="header">
-                    <h1>{stockInformation.stockSymbol}'s Analytics</h1>
+                    <h1>{stockSymbol}'s Analytics</h1>
                     <button className="closeInfo"
                         onClick={() => closeStockInfo(false)}> X </button>
                 </div>
-                <div className="body">
-                    <p>GRAPH: has historical data and predicted data, with a marking on the current date</p>
+                <div className="buttons">
+                    <button>Week</button>
+                    <button>Month</button>
+                    <button>Quarter</button>
+                    <button>Year</button>
+                    <button>5 Years</button>
                 </div>
+                <Graph stockSymbol={stockSymbol}/>
                 <div className="footer">
-                    <button>Buy Stock</button>
                     <button className="cancel-btn"onClick={() => closeStockInfo(false)}>Cancel</button>
                 </div>
             </div>
