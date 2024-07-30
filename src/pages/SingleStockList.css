@@ -217,3 +217,25 @@
     margin-left: 50px;
   }
 
+
+
+  .col-analytics {
+    width: 100px
+  }
+
+  .table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .analytics-button{
+    background-color: #1E5945;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
