@@ -15,6 +15,7 @@ export default function SingleResult({ stock }) {
                 })
             });
             const jsonData = await response.json();
+            window.location.reload();
             console.log(jsonData);
         } catch (err) {
             console.error(err.message);
