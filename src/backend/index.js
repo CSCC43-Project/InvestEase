@@ -530,6 +530,16 @@ app.post('/addreview', async (req, res) => {
     }
 });
 
+app.put("/updateReview", async (req, res) => {
+    try {
+        const { reviewerid, stocklistid, ownerid, review_text } = req.body;
+        const updateReview = await pool.query("UPDATE review SET review_text = $4 WHERE reviewerid = $1 AND stocklistid = $2 AND ownerid =$3", [reviewerid, stocklistid, ownerid, review_text]);
+        res.json({response: "review updated"});
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 app.delete('/reviews/:ownerid/:stocklistid/:reviewerid', async (req, res) => {
     try {
         const { ownerid, stocklistid, reviewerid } = req.params;

@@ -94,6 +94,23 @@ export default function AnotherStockList(){
         })();
     };
 
+    const updateReview = (ownerid, text) => {
+        (async () => {
+            try {
+                const updateReview = await fetch('http://localhost:5000/updateReview', {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({reviewerid: uid, stocklistid: listId, ownerid: ownerid, review_text: text}),
+                });
+                const data = await updateReview.json();
+                setIsEditing(false);
+                window.location.reload();
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    };
+
     return (
         <div>
             <Header profile={true}/>
@@ -139,7 +156,7 @@ export default function AnotherStockList(){
                                 {review.reviewerid == uid && (
                                     <div>
                                         { isEditing ? (
-                                            <button className='edit-review' onClick={handleSave/*() => addReview(review.ownerid, review.review_text)*/}>Save</button>
+                                            <button className='edit-review' onClick={() => updateReview(review.ownerid, editText)}>Save</button>
                                         ) : (
                                             <button className='edit-review' onClick={() => handleEdit(review)}>Edit</button>
                                         )}
