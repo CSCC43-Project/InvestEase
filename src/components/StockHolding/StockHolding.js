@@ -1,7 +1,8 @@
 import './StockHolding.css';
 import { useEffect, useState } from 'react';
+import { getMV, setMV, addMV } from './PresentMarketValue';
 
-export default function StockHolding({ stock, cashAccount }) {
+export default function StockHolding({ stock, cashAccount, marketValue, setMarketValue }) {
     const uid = localStorage.getItem('userid');
     const [amount, setAmount] = useState(500);
     const [tempAmount, setTempAmount] = useState(0);
@@ -49,11 +50,13 @@ export default function StockHolding({ stock, cashAccount }) {
                 const response = await fetch(`http://localhost:5000/lateststocks/${stock.stock_symbol}`);
                 const jsonData = await response.json();
                 setLatestStockPrice(jsonData[0].close);
+                addMV((jsonData[0].close * stock.num_shares));
             } catch (err) {
                 console.error(err.message);
             }
         })();
     }, []);
+
     async function updateCash(amount) {
         try {
             const response = await fetch(`http://localhost:5000/portfolios/${stock.portfolioid}/${uid}`, {
@@ -62,7 +65,6 @@ export default function StockHolding({ stock, cashAccount }) {
                 body: JSON.stringify({ cash_account: amount })
             });
             const jsonData = await response.json();
-            window.location.reload();
         } catch (err) {
             console.error(err.message);
         }

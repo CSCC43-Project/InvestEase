@@ -379,6 +379,16 @@ app.get('/lateststocks/:symbol', async (req, res) => {
     }
 });
 
+app.get('/marketinfo/:portfolioid/:userid', async (req, res) => {
+    try {
+        const { portfolioid, userid } = req.params;
+        const marketInfo = await pool.query('select portfolioid, userid, stock_symbol, stocks.timestamp, num_shares, close from stock_holding join stocks on stock_holding.stock_symbol = stocks.symbol WHERE (stocks.timestamp, close) = (SELECT timestamp, close FROM stocks WHERE symbol = stock_holding.stock_symbol ORDER BY timestamp DESC LIMIT 1) AND portfolioid = $1 AND userid = $2', [portfolioid, userid]);
+        res.json(marketInfo.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 // ? Add stock to stocks
 // INSERT INTO stocks (symbol, timestamp, open, high, low, close, volume) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
 app.post('/addstocks', async (req, res) => {

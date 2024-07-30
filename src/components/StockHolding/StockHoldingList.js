@@ -2,7 +2,7 @@ import './StockHoldingList.css';
 import StockHolding from './StockHolding';
 import { useState, useEffect } from 'react';
 
-export default function StockHoldingList({ cashAccount, portfolioID }) {
+export default function StockHoldingList({ cashAccount, portfolioID, marketValue, setMarketValue }) {
     const uid = localStorage.getItem('userid');
     const [stockHoldings, setStockHoldings] = useState([]);
     useEffect(() => {
@@ -32,7 +32,7 @@ export default function StockHoldingList({ cashAccount, portfolioID }) {
         </thead>
         <tbody className='stocks'>
             {stockHoldings.map((stock) => (
-                <StockHolding key={stock.stockid} stock={stock} cashAccount={cashAccount} />
+                <StockHolding key={stock.stockid} stock={stock} cashAccount={cashAccount} marketValue={marketValue} setMarketValue={setMarketValue} />
             ))}
         </tbody>
     </table>

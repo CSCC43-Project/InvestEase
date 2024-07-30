@@ -11,11 +11,10 @@ export default function SinglePortfolio() {
     const portfolioID = useParams().id;
     const [userInfo, setUserInfo] = useState([]);
     const [portfolioInfo, setPortfolioInfo] = useState([]);
-    const [marketValue, setMarketValue] = useState(10);
-    // set marketValue
     const [amount, setAmount] = useState(0);
     const [openStocks, setOpenStocks] = useState(false);
     const [openTransaction, setOpenTransaction] = useState(false);
+    const [marketValue, setMarketValue] = useState(0);
 
     useEffect(() => {
         (async () => {
@@ -34,6 +33,21 @@ export default function SinglePortfolio() {
                 const response = await fetch(`http://localhost:5000/portfolios/${portfolioID}/${uid}`);
                 const jsonData = await response.json();
                 setPortfolioInfo(jsonData[0]);
+            } catch (err) {
+                console.error(err.message);
+            }
+        })();
+    }, []);
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/marketinfo/${portfolioID}/${uid}`);
+                const jsonData = await response.json();
+                let totalMarketValue = 0;
+                jsonData.forEach((stock) => {
+                    totalMarketValue += stock.close * stock.num_shares;
+                });
+                setMarketValue(totalMarketValue);
             } catch (err) {
                 console.error(err.message);
             }
@@ -89,7 +103,7 @@ export default function SinglePortfolio() {
                             <button>View Portfolio Statistics</button>
                     </div>
                     <h2 className='account'><span style={{ color: 'black' }}>Cash Account</span>: ${portfolioInfo.cash_account}</h2>
-                    <p className='account'><span style={{ color: 'black' }}>Estimated present market value</span>: {marketValue}%</p>
+                    <p className='account'><span style={{ color: 'black' }}>Estimated present market value</span>: {marketValue + portfolioInfo.cash_account}</p>
                 </div>
                 <h2 style={{ color: 'white' }}>Money Transactions</h2>
             </div>
@@ -103,7 +117,7 @@ export default function SinglePortfolio() {
             </div>
             <div>
                 <h1 style={{ color: 'white', paddingTop: 20 }}>Stock Holdings</h1>
-                <StockHoldingList cashAccount={portfolioInfo.cash_account} portfolioID={portfolioID} />
+                <StockHoldingList cashAccount={portfolioInfo.cash_account} portfolioID={portfolioID} marketValue={marketValue} setMarketValue={setMarketValue}/>
             </div>
             <button className='trans-history' onClick={() => setOpenTransaction(true)}>View Stock Transaction List</button>
             <button className='add-stocks' onClick={() => setOpenStocks(true)}>Add Stocks to Holdings</button>
