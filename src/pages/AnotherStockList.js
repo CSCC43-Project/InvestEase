@@ -10,22 +10,21 @@ export default function AnotherStockList(){
     const [stockListItems, setStockListItems] = useState([]);
     const [ownerUsername, setOwnerUsername] = useState('');
     const [reviewsList, setReviewsList] = useState([]);
+    const [hasUid, setHasUid] = useState(false);
 
     const [isEditing, setIsEditing] = useState(false);
-    const [editText, setEditText] = useState('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ');
-    
+    const [editText, setEditText] = useState('');
+    const [addText, setAddText] = useState('');
     const ref = useRef(null);
     const [maxHeight, setMaxHeight] = useState(0);
 
-    useEffect(() => {
-        if(ref.current){
-            setMaxHeight(ref.current.offsetHeight);
-        }
-    }, []);
-
-    const inputChange = (value) => {
+    const inputChangeEdit = (value) => {
        setEditText(value); 
     }
+
+    const inputChangeAdd = (value) => {
+        setAddText(value); 
+     }
 
     function handleEdit(review){
         setIsEditing(true);
@@ -33,10 +32,6 @@ export default function AnotherStockList(){
         if(ref.current){
             setMaxHeight(ref.current.offsetHeight);
         }
-    }
-    
-    function handleSave(){
-        setIsEditing(false);
     }
 
     useEffect(() => {
@@ -49,7 +44,7 @@ export default function AnotherStockList(){
                 console.error(error.message);
             }
         })();
-    }, []);
+    }, [ownerid, listId]);
 
     useEffect(() => {
         ( async () => {
@@ -61,7 +56,7 @@ export default function AnotherStockList(){
                 console.error(error.message);
             }
         })();
-    }, []);
+    }, [ownerid]);
 
     useEffect(() => {
         ( async () => {
@@ -69,11 +64,12 @@ export default function AnotherStockList(){
                 const res = await fetch(`http://localhost:5000/reviews/${ownerid}/${listId}`);
                 const data = await res.json();
                 setReviewsList(data);
+                setHasUid(!data.some(rev => rev.reviewerid.toString() === uid.toString()))
             } catch (error) {
                 console.error(error.message);
             }
         })();
-    }, []);
+    }, [ownerid, listId, uid]);
 
     const deleteReview = (ownerid) => {
         (async () => {
@@ -83,12 +79,14 @@ export default function AnotherStockList(){
                 });
                 const data = await res.json();
                 setReviewsList(reviewsList.filter((review) => review.reviewid !== ownerid));
+                setHasUid(true);
                 window.location.reload();
             } catch (error) {
                 console.error(error.message);
             }
         })();
     };
+
 
     const addReview = (ownerid, text) => {
         (async () => {
@@ -99,6 +97,7 @@ export default function AnotherStockList(){
                     body: JSON.stringify({reviewerid: uid, stocklistid: listId, ownerid: ownerid, review_text: text}),
                 });
                 setIsEditing(false);
+                setHasUid(false);
                 window.location.reload();
             } catch (error) {
                 console.error(error.message);
@@ -136,7 +135,7 @@ export default function AnotherStockList(){
                 </thead>
                 <tbody className='stock-list-item'>
                     {stockListItems.map((item) => (
-                        <tr>
+                        <tr key={item.symbol}>
                             <td>{item.symbol}</td>
                             <td>{item.num_shares}</td>
                         </tr>
@@ -145,7 +144,7 @@ export default function AnotherStockList(){
             </table>
 
             <div className='empty-text-container'>
-                { stockListItems == 0 && (
+                { stockListItems.length === 0 && (
                     <h1 className='empty-text'>There are no stocks in this list.</h1>
                 )}
             </div>
@@ -153,7 +152,7 @@ export default function AnotherStockList(){
             <div className='reviews'>
                 <h2 className='review-title'>Reviews</h2>
                 <div className='empty-text-container'>
-                    { reviewsList == 0 && (
+                    { reviewsList.length === 0 && (
                         <h1 className='empty-text'>There are no reviews for this list.</h1>
                     )}
                 </div>
@@ -172,18 +171,25 @@ export default function AnotherStockList(){
                                         ) : (
                                             <button className='edit-review' onClick={() => handleEdit(review)}>Edit</button>
                                         )}
-                                        <button className='delete-review' onClick={() => deleteReview(review.ownerid)}>Delete</button>
+                                        <button className='delete-review' onClick={() => deleteReview(ownerid)}>Delete</button>
                                     </div>
                                 )}
                             </div>
                         </div>
                         { isEditing && review.reviewerid == uid ? (
-                            <textarea style={{height: maxHeight}} className='review-input' type='text' value={editText} onChange={(e) => inputChange(e.target.value)}/>
+                            <textarea style={{height: maxHeight}} className='review-input' type='text' value={editText} onChange={(e) => inputChangeEdit(e.target.value)}/>
                         ) : (
                             <h4 ref={ref} className='review-text'>{review.review_text}</h4>
                         )}
                     </div>
                 ))}
+                { hasUid && (
+                    <div className='add-review-container'>
+                        <h2 className='add-review-title'>Add a review</h2>
+                        <textarea className='add-review-input' type='text' onChange={(e) => inputChangeAdd(e.target.value)}/>
+                        <button className='add-review-button' onClick={() => addReview(ownerid, addText)}>Add Review</button>
+                    </div>
+                )}
             </div>
         </div>
     );
