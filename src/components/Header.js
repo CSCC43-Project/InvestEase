@@ -18,7 +18,7 @@ function Header({profile, logout}) {
 
     return (
         <header className="header">
-            <h1 onClick={handleHome}>InvestEase</h1>
+            <h1 className="header-title" onClick={handleHome}>InvestEase</h1>
             <nav>
                 {profile === true && (
                     <button className="header-button" onClick={handleProfile}>Profile</button>
