@@ -93,7 +93,7 @@ export default function AnotherStockList(){
                 }
             }
         })();
-    }, [ownerid, listId, uid]);
+    }, [ownerid, listId, uid, isPublic]);
 
     const deleteReview = (ownerid) => {
         (async () => {
