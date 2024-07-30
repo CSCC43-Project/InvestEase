@@ -62,13 +62,17 @@ export default function Stocks() {
     if (openAddInfo) {
         return (
             <div>
-                <input className="symbol" placeholder='Enter Stock Symbol: ' type="text"></input>
-                <input className="open" placeholder='Enter Open Value: ' type="number"></input>
-                <input className="high" placeholder='Enter High Value: ' type="number"></input>
-                <input className="low" placeholder='Enter Low Value: ' type="number"></input>
-                <input className="close" placeholder='Enter Close Value: ' type="number"></input>
-                <input className="volume" placeholder='Enter Volume: ' type="number"></input>
-                <button onClick={() => addStocks()}>Add Stock</button>
+                <h2 style={{ marginLeft: '20px' }}>Insert Information About a Stock</h2>
+                <div className='guh'>
+                    <input className="symbol" placeholder='Enter Stock Symbol: '></input>
+                    <input className="open" placeholder='Enter Open Value: ' type="number"></input>
+                    <input className="high" placeholder='Enter High Value: ' type="number"></input>
+                    <input className="low" placeholder='Enter Low Value: ' type="number"></input>
+                    <input className="close" placeholder='Enter Close Value: ' type="number"></input>
+                    <input className="volume" placeholder='Enter Volume: ' type="number"></input>
+                    <button onClick={() => addStocks()}>Add Stock</button>
+                </div>
+                <button style={{ marginLeft: '20px' }} onClick={() => setOpenAddInfo(false)}>Close</button>
             </div>
         );
     }
