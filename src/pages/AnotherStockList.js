@@ -149,9 +149,6 @@ export default function AnotherStockList(){
     return (
         <div>
             <Header profile={true}/>
-            { isPublic && (
-                <h1>Public</h1>
-            )}
             <h1 className='stock-list-title'> {ownerUsername}'s stock list: {listId}</h1>
             <table className='stock-list-table'>
                 <thead>
