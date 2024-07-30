@@ -188,5 +188,32 @@
     width: 100%;
     margin-left: 20px;
     margin-bottom: 20px;
+    min-height: 30px;
+  }
+
+  .add-review-input {
+    max-width: 95%;
+    width: 100%;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    height: 100px;
+  }
+
+  .add-review-button {
+    background-color: #1E5945;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+
+  .add-review-title {
+    color: rgb(63, 61, 61);
+    font-size: 20px;
+    margin-left: 50px;
   }
 
