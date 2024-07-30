@@ -520,6 +520,16 @@ app.get('/reviews/:ownerid/:stocklistid', async (req, res) => {
     }
 });
 
+app.post('/addreview', async (req, res) => {
+    try {
+        const { reviewerid, stocklistid, ownerid, review_text} = req.body;
+        const reviews = await pool.query('INSERT INTO review (reviewerid, stocklistid, ownerid, review_text) VALUES ($1, $2, $3, $4) RETURNING *', [reviewerid, stocklistid, ownerid, review_text]);
+        res.status(200).json({response: "review added"});
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 app.delete('/reviews/:ownerid/:stocklistid/:reviewerid', async (req, res) => {
     try {
         const { ownerid, stocklistid, reviewerid } = req.params;

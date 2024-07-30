@@ -11,6 +11,22 @@ export default function AnotherStockList(){
     const [ownerUsername, setOwnerUsername] = useState('');
     const [reviewsList, setReviewsList] = useState([]);
 
+    const [isEditing, setIsEditing] = useState(false);
+    const [editText, setEditText] = useState('');
+    
+    const inputChange = (value) => {
+       setEditText(value); 
+    }
+
+    function handleEdit(review){
+        setIsEditing(true);
+        setEditText(review.review_text);
+    }
+    
+    function handleSave(){
+        setIsEditing(false);
+    }
+
     useEffect(() => {
         ( async () => {
             try {
@@ -46,6 +62,37 @@ export default function AnotherStockList(){
             }
         })();
     }, []);
+
+    const deleteReview = (ownerid) => {
+        (async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/reviews/${ownerid}/${listId}/${uid}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                setReviewsList(reviewsList.filter((review) => review.reviewid !== ownerid));
+                window.location.reload();
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    };
+
+    const addReview = (ownerid, text) => {
+        (async () => {
+            try {
+                const addReview = await fetch('http://localhost:5000/addReview', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({reviewerid: uid, stocklistid: listId, ownerid: ownerid, review_text: text}),
+                });
+                setIsEditing(false);
+                window.location.reload();
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    };
 
     return (
         <div>
@@ -91,13 +138,21 @@ export default function AnotherStockList(){
                             <div>
                                 {review.reviewerid == uid && (
                                     <div>
-                                        <button className='edit-review'>Edit</button>
-                                        <button className='delete-review'>Delete</button>
+                                        { isEditing ? (
+                                            <button className='edit-review' onClick={handleSave/*() => addReview(review.ownerid, review.review_text)*/}>Save</button>
+                                        ) : (
+                                            <button className='edit-review' onClick={() => handleEdit(review)}>Edit</button>
+                                        )}
+                                        <button className='delete-review' onClick={() => deleteReview(review.ownerid)}>Delete</button>
                                     </div>
                                 )}
                             </div>
                         </div>
-                        <h4 className='review-text'>{review.review_text}</h4>
+                        { isEditing && review.reviewerid == uid ? (
+                            <input className='review-input' type='text' value={editText} onChange={(e) => inputChange(e.target.value)}/>
+                        ) : (
+                            <h4 className='review-text'>{review.review_text}</h4>
+                        )}
                     </div>
                 ))}
             </div>

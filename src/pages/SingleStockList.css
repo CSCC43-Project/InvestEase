@@ -183,3 +183,10 @@
     font-size: 15px;
   }
 
+  .review-input {
+    max-width: 95%;
+    width: 100%;
+    margin-left: 20px;
+    margin-bottom: 20px;
+  }
+
