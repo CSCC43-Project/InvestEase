@@ -1,8 +1,7 @@
 import './StockHolding.css';
 import { useEffect, useState } from 'react';
-import { getMV, setMV, addMV } from './PresentMarketValue';
 
-export default function StockHolding({ stock, cashAccount, marketValue, setMarketValue }) {
+export default function StockHolding({ stock, cashAccount }) {
     const uid = localStorage.getItem('userid');
     const [amount, setAmount] = useState(500);
     const [tempAmount, setTempAmount] = useState(0);
@@ -50,7 +49,6 @@ export default function StockHolding({ stock, cashAccount, marketValue, setMarke
                 const response = await fetch(`http://localhost:5000/lateststocks/${stock.stock_symbol}`);
                 const jsonData = await response.json();
                 setLatestStockPrice(jsonData[0].close);
-                addMV((jsonData[0].close * stock.num_shares));
             } catch (err) {
                 console.error(err.message);
             }
