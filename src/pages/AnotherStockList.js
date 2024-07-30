@@ -18,6 +18,8 @@ export default function AnotherStockList(){
     const ref = useRef(null);
     const [maxHeight, setMaxHeight] = useState(0);
 
+    const [isPublic, setIsPublic] = useState(false);
+
     const inputChangeEdit = (value) => {
        setEditText(value); 
     }
@@ -33,6 +35,17 @@ export default function AnotherStockList(){
             setMaxHeight(ref.current.offsetHeight);
         }
     }
+    useEffect(() => {
+        ( async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/listvisibility/${ownerid}/${listId}`);
+                const data = await res.json();
+                setIsPublic(data.is_public);
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    })
 
     useEffect(() => {
         ( async () => {
@@ -60,13 +73,24 @@ export default function AnotherStockList(){
 
     useEffect(() => {
         ( async () => {
-            try {
-                const res = await fetch(`http://localhost:5000/reviews/${ownerid}/${listId}`);
-                const data = await res.json();
-                setReviewsList(data);
-                setHasUid(!data.some(rev => rev.reviewerid.toString() === uid.toString()))
-            } catch (error) {
-                console.error(error.message);
+            if(isPublic){
+                try {
+                    const res = await fetch(`http://localhost:5000/reviews/${ownerid}/${listId}`);
+                    const data = await res.json();
+                    setReviewsList(data);
+                    setHasUid(!data.some(rev => rev.reviewerid.toString() === uid.toString()))
+                } catch (error) {
+                    console.error(error.message);
+                }
+            } else {
+                try {
+                    const res = await fetch(`http://localhost:5000/myreview/${ownerid}/${listId}/${uid}`);
+                    const data = await res.json();
+                    setReviewsList(data);
+                    setHasUid(!data.some(rev => rev.reviewerid.toString() === uid.toString()))
+                } catch (error) {
+                    console.error(error.message);
+                }
             }
         })();
     }, [ownerid, listId, uid]);
@@ -125,6 +149,9 @@ export default function AnotherStockList(){
     return (
         <div>
             <Header profile={true}/>
+            { isPublic && (
+                <h1>Public</h1>
+            )}
             <h1 className='stock-list-title'> {ownerUsername}'s stock list: {listId}</h1>
             <table className='stock-list-table'>
                 <thead>
