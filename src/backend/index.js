@@ -96,7 +96,7 @@ app.post('/checkLogin', async (req, res) => {
     app.get('/friendcount/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const friendCount = await pool.query('SELECT COUNT(*) FROM friends_list WHERE ownerID = $1 GROUP BY ownerID', [id]);
+            const friendCount = await pool.query("SELECT COUNT(*) FROM friends_list WHERE ownerID = $1 AND status = 'mut' GROUP BY ownerID", [id]);
             res.json(friendCount.rows[0]);
         } catch (error) {
             console.error(error.message);
@@ -113,7 +113,7 @@ app.post('/checkLogin', async (req, res) => {
     app.get('/friendslist/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const friendsList = await pool.query('SELECT * FROM friends_list WHERE ownerID = $1', [id]);
+            const friendsList = await pool.query("SELECT * FROM friends_list WHERE ownerID = $1 AND status = 'mut'", [id]);
             res.json(friendsList.rows);
         } catch (error) {
             console.error(error.message);
@@ -149,7 +149,15 @@ app.post('/checkLogin', async (req, res) => {
             const newFriendRequest = await pool.query("INSERT INTO friend_request (senderID, receiverID, time_received) VALUES ($1, $2, NOW()) RETURNING *", [senderID, receiverID]);
             res.json(newFriendRequest.rows[0]);
         } catch (error) {
-            console.error(error.message);
+            if (error.code === '23505') {
+                try {
+                    const { senderID, receiverID } = req.body;
+                    const updateFriendRequest = await pool.query("UPDATE friend_request SET request_status = 'ipr', time_received = NOW() WHERE senderID = $1 AND receiverID = $2 RETURNING *", [senderID, receiverID]);
+                    res.json(updateFriendRequest.rows[0]);
+                } catch (error) {
+                    console.error(error.message);
+                }
+            }
         }
     });
     // ? FriendRequest: accept friend request
@@ -158,8 +166,8 @@ app.post('/checkLogin', async (req, res) => {
     app.post("/friendrequest/accept", async (req, res) => {
         try {
             const { ownerID, friendID } = req.body;
-            const newFriend = await pool.query("INSERT INTO friends_list (ownerID, friendID) VALUES ($1, $2) RETURNING *", [ownerID, friendID]);
-            const newFriend2 = await pool.query("INSERT INTO friends_list (ownerID, friendID) VALUES ($2, $1) RETURNING *", [ownerID, friendID]);
+            const newFriend = await pool.query("INSERT INTO friends_list (ownerID, friendID, status, time_received) VALUES ($1, $2, 'mut', NOW()) RETURNING *", [ownerID, friendID]);
+            const newFriend2 = await pool.query("INSERT INTO friends_list (ownerID, friendID, status, time_received) VALUES ($2, $1, 'mut', NOW()) RETURNING *", [ownerID, friendID]);
             const deleteRequest = await pool.query("DELETE FROM friend_request WHERE senderID = $1 AND receiverID = $2", [friendID, ownerID]);
             res.json(newFriend.rows[0]);
         } catch (error) {
@@ -189,25 +197,28 @@ app.post('/checkLogin', async (req, res) => {
         }
     });
     // ? FriendList: delete mutual friend
-    // DELETE FROM friends_list WHERE ownerID = $1 AND friendID = $2;
-    // DELETE FROM friends_list WHERE ownerID = $2 AND friendID = $1;
-    app.delete("/friendslist/delete", async (req, res) => {
+    app.put("/friendslist/delete", async (req, res) => {
         try {
             const { ownerID, friendID } = req.body;
-            const deleteFriend = await pool.query("DELETE FROM friends_list WHERE ownerID = $1 AND friendID = $2", [ownerID, friendID]);
-            const deleteFriend2 = await pool.query("DELETE FROM friends_list WHERE ownerID = $2 AND friendID = $1", [ownerID, friendID]);
-            res.json(deleteFriend.rows[0]);
+            const deleteFriend = await pool.query("UPDATE friends_list SET status = 'del', time_received = NOW() WHERE ownerID = $1 AND friendID = $2", [ownerID, friendID]);
+            const deleteFriend2 = await pool.query("UPDATE friends_list SET status = 'del', time_received = NOW() WHERE ownerID = $2 AND friendID = $1", [ownerID, friendID]);
+            res.json("hi");
         } catch (error) {
             console.error(error.message);
         }
     });
 
     // ? Get All users - friends - already requested for search
-    // SELECT * FROM users WHERE userid = $1 EXCEPT SELECT * FROM friends_list WHERE ownerID = $1;
+    // GET ALL USERS - FRIENDS - ALREADY REQUESTED - REQUESTED IN THE LAST 5 MINUTES
     app.get("/searchfriends/:id", async (req, res) => {
         try {
             const { id } = req.params;
-            const friends = await pool.query("SELECT userid FROM users WHERE userid != $1 EXCEPT SELECT friendid FROM friends_list WHERE ownerID = $1 EXCEPT SELECT receiverid FROM friend_request WHERE senderid = $1", [id]);
+            await pool.query("DELETE FROM friend_request WHERE request_status = 'rej' AND time_received <= (NOW() - INTERVAL '5 MINUTES')");
+            await pool.query("DELETE FROM friends_list WHERE status = 'del' AND time_received <= (NOW() - INTERVAL '5 MINUTES')");
+            const friends = await pool.query("(SELECT userid FROM users WHERE userid != $1 \
+                EXCEPT SELECT friendid FROM friends_list WHERE ownerID = $1 \
+                EXCEPT SELECT receiverid FROM friend_request WHERE senderid = $1\
+                EXCEPT SELECT senderid FROM friend_request WHERE request_status = 'rej')", [id]);
             res.json(friends.rows);
         } catch (error) {
             console.error(error.message);
@@ -485,7 +496,7 @@ app.post("stocklistitem/:stocklistid/:ownerid", async (req, res) => {
 app.get('/sharedstocklist/:stocklistid/:ownerid', async (req, res) => {
     try {
         const { stocklistid, ownerid } = req.params;
-        const sharedStockList = await pool.query('SELECT friendid FROM friends_list WHERE ownerid = $2 EXCEPT SELECT shared_userid FROM shared_stock_list WHERE stocklistid = $1 AND ownerid = $2', [stocklistid, ownerid]);
+        const sharedStockList = await pool.query("SELECT friendid FROM friends_list WHERE ownerid = $2 AND status = 'mut' EXCEPT SELECT shared_userid FROM shared_stock_list WHERE stocklistid = $1 AND ownerid = $2", [stocklistid, ownerid]);
         res.json(sharedStockList.rows);
     } catch (error) {
         console.error(error.message);
