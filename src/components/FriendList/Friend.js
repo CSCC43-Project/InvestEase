@@ -34,12 +34,11 @@ function Friend({ id, type, status }) {
         }
     };
     const declineIncoming = async () => {
-        console.log('decline button clicked');
         try {
             const response = await fetch(`http://localhost:5000/friendrequest/decline`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ friendID: id, ownerID: uid }),
+                body: JSON.stringify({ senderID: id, receiverID: uid }),
             });
             window.location.reload();
         } catch (err) {
@@ -63,7 +62,7 @@ function Friend({ id, type, status }) {
         console.log('delete button clicked');
         try {
             const response = await fetch(`http://localhost:5000/friendslist/delete`, {
-                method: 'DELETE',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ friendID: id, ownerID: uid }),
             });
