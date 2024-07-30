@@ -147,19 +147,31 @@ export default function SingleStockList(){
                     ))}
                 </tbody>
             </table>
+            <div className='empty-text-container'>
+                { stockListItems == 0 && (
+                    <h1 className='empty-text'>There are no stocks in this list.</h1>
+                )}
+            </div>
             <div className="add-button-container">
                 <button className='add-button'>Add stocks to list</button>  
             </div>
             <div className='reviews'>
                 <h2 className='review-title'>Reviews</h2>
+                <div className='empty-text-container'>
+                    { reviewsList == 0 && (
+                        <h1 className='empty-text'>There are no reviews for this list.</h1>
+                    )}
+                </div>
                 {reviewsList.map((review) => (
                     <div className='review-item'>
-                        <div className='reviewer-info'>
-                            <img className='profile-pic' src={review.profilepic_url}></img>
-                            <h3 className='reviewer-name'>{review.username}</h3>
+                        <div className='review-bar'>
+                            <div className='reviewer-info'>
+                                <img className='profile-pic' src={review.profilepic_url}></img>
+                                <h3 className='reviewer-name'>{review.username}</h3>
+                            </div>
+                            <button className='delete-review' onClick={() => deleteReview(review.reviewerid)}>Delete</button>
                         </div>
                         <h4 className='review-text'>{review.review_text}</h4>
-                        <button className='del-review' onClick={() => deleteReview(review.reviewerid)}>X</button>
                     </div>
                 ))}
             </div>

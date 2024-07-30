@@ -11,6 +11,22 @@ export default function AnotherStockList(){
     const [ownerUsername, setOwnerUsername] = useState('');
     const [reviewsList, setReviewsList] = useState([]);
 
+    const [isEditing, setIsEditing] = useState(false);
+    const [editText, setEditText] = useState('');
+    
+    const inputChange = (value) => {
+       setEditText(value); 
+    }
+
+    function handleEdit(review){
+        setIsEditing(true);
+        setEditText(review.review_text);
+    }
+    
+    function handleSave(){
+        setIsEditing(false);
+    }
+
     useEffect(() => {
         ( async () => {
             try {
@@ -38,7 +54,7 @@ export default function AnotherStockList(){
     useEffect(() => {
         ( async () => {
             try {
-                const res = await fetch(`http://localhost:5000/ownerreviews/${ownerid}/${listId}`);
+                const res = await fetch(`http://localhost:5000/reviews/${ownerid}/${listId}`);
                 const data = await res.json();
                 setReviewsList(data);
             } catch (error) {
@@ -46,6 +62,54 @@ export default function AnotherStockList(){
             }
         })();
     }, []);
+
+    const deleteReview = (ownerid) => {
+        (async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/reviews/${ownerid}/${listId}/${uid}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                setReviewsList(reviewsList.filter((review) => review.reviewid !== ownerid));
+                window.location.reload();
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    };
+
+    const addReview = (ownerid, text) => {
+        (async () => {
+            try {
+                const addReview = await fetch('http://localhost:5000/addReview', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({reviewerid: uid, stocklistid: listId, ownerid: ownerid, review_text: text}),
+                });
+                setIsEditing(false);
+                window.location.reload();
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    };
+
+    const updateReview = (ownerid, text) => {
+        (async () => {
+            try {
+                const updateReview = await fetch('http://localhost:5000/updateReview', {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({reviewerid: uid, stocklistid: listId, ownerid: ownerid, review_text: text}),
+                });
+                const data = await updateReview.json();
+                setIsEditing(false);
+                window.location.reload();
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    };
 
     return (
         <div>
@@ -67,12 +131,45 @@ export default function AnotherStockList(){
                     ))}
                 </tbody>
             </table>
+
+            <div className='empty-text-container'>
+                { stockListItems == 0 && (
+                    <h1 className='empty-text'>There are no stocks in this list.</h1>
+                )}
+            </div>
+
             <div className='reviews'>
                 <h2 className='review-title'>Reviews</h2>
+                <div className='empty-text-container'>
+                    { reviewsList == 0 && (
+                        <h1 className='empty-text'>There are no reviews for this list.</h1>
+                    )}
+                </div>
                 {reviewsList.map((review) => (
                     <div className='review-item'>
-                        <h3>Username: {review.username}</h3>
-                        <h4 className='review-text'>{review.review_text}</h4>
+                        <div className='review-bar'>
+                            <div className='reviewer-info'>
+                                <img className='profile-pic' src={review.profilepic_url}></img>
+                                <h3 className='reviewer-name'>{review.username}</h3>
+                            </div>
+                            <div>
+                                {review.reviewerid == uid && (
+                                    <div>
+                                        { isEditing ? (
+                                            <button className='edit-review' onClick={() => updateReview(review.ownerid, editText)}>Save</button>
+                                        ) : (
+                                            <button className='edit-review' onClick={() => handleEdit(review)}>Edit</button>
+                                        )}
+                                        <button className='delete-review' onClick={() => deleteReview(review.ownerid)}>Delete</button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        { isEditing && review.reviewerid == uid ? (
+                            <input className='review-input' type='text' value={editText} onChange={(e) => inputChange(e.target.value)}/>
+                        ) : (
+                            <h4 className='review-text'>{review.review_text}</h4>
+                        )}
                     </div>
                 ))}
             </div>
