@@ -146,6 +146,10 @@ export default function AnotherStockList(){
         })();
     };
 
+    function handleAnalytics(){
+        
+    }
+
     return (
         <div>
             <Header profile={true}/>
@@ -153,6 +157,7 @@ export default function AnotherStockList(){
             <table className='stock-list-table'>
                 <thead>
                     <tr>
+                    <th scope='col' className='col-analytics'>Analytics</th>
                         <th scope="col">Stock Symbol</th>
                         <th scope="col">Amount Owned</th>
                     </tr>
@@ -160,6 +165,7 @@ export default function AnotherStockList(){
                 <tbody className='stock-list-item'>
                     {stockListItems.map((item) => (
                         <tr key={item.symbol}>
+                            <td  className='col-analytics'><button className='analytics-button' onClick={handleAnalytics()}>View</button></td>
                             <td>{item.symbol}</td>
                             <td>{item.num_shares}</td>
                         </tr>
