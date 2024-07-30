@@ -378,6 +378,18 @@ app.get('/lateststocks/:symbol', async (req, res) => {
         console.error(error.message);
     }
 });
+
+// ? Add stock to stocks
+// INSERT INTO stocks (symbol, timestamp, open, high, low, close, volume) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
+app.post('/addstocks', async (req, res) => {
+    try {
+        const { symbol, open, high, low, close, volume } = req.body;
+        const newStock = await pool.query('INSERT INTO stocks (symbol, timestamp, open, high, low, close, volume) VALUES ($1, NOW(), $2, $3, $4, $5, $6) RETURNING *', [symbol, open, high, low, close, volume]);
+        res.json(newStock.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
     // ? View statistics of a specifc stock
     // SELECT close FROM stocks WHERE symbol = $1;
 

@@ -6,6 +6,7 @@ export default function Stocks() {
     const [openStocks, setOpenStocks] = useState(false);
     const [stockSymbol, setStockSymbol] = useState('');
     const [stocks, setStocks] = useState([]);
+    const [openAddInfo, setOpenAddInfo] = useState(false);
     useEffect(() => {
         (async () => {
             try {
@@ -33,15 +34,50 @@ export default function Stocks() {
         });
     }, []);
 
+    async function addStocks() {
+        const symbol = document.querySelector('.symbol').value;
+        const open = Number(document.querySelector('.open').value);
+        const high = Number(document.querySelector('.high').value);
+        const low = Number(document.querySelector('.low').value);
+        const close = Number(document.querySelector('.close').value);
+        const volume = Number(document.querySelector('.volume').value);
+        try {
+            const response = await fetch('http://localhost:5000/addstocks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ symbol, open, high, low, close, volume }),
+            });
+            window.location.reload();
+        } catch (err) {
+            console.log('Error occurred when adding stocks');
+        }
+    }
+
     if (openStocks) {
         return (
         <div>
             <SingleStock closeStockInfo={setOpenStocks} stockSymbol={stockSymbol} />
         </div>);
     }
+    if (openAddInfo) {
+        return (
+            <div>
+                <input className="symbol" placeholder='Enter Stock Symbol: ' type="text"></input>
+                <input className="open" placeholder='Enter Open Value: ' type="number"></input>
+                <input className="high" placeholder='Enter High Value: ' type="number"></input>
+                <input className="low" placeholder='Enter Low Value: ' type="number"></input>
+                <input className="close" placeholder='Enter Close Value: ' type="number"></input>
+                <input className="volume" placeholder='Enter Volume: ' type="number"></input>
+                <button onClick={() => addStocks()}>Add Stock</button>
+            </div>
+        );
+    }
     return (
         <div>
-            <h1 className="list">Available Stocks</h1>
+            <div className='header-and-button'>
+                <h1 className="list">Available Stocks</h1>
+                <button onClick={() => setOpenAddInfo(true)}>Add data to stocks</button>
+            </div>
             <div className='searc'>
                 <input type="text" placeholder="Search for a stock" className="searchBar"/>
                 <button className="searchButton">Search</button>
