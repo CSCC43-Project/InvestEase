@@ -117,7 +117,7 @@ export default function SinglePortfolio() {
             </div>
             <div>
                 <h1 style={{ color: 'white', paddingTop: 20 }}>Stock Holdings</h1>
-                <StockHoldingList cashAccount={portfolioInfo.cash_account} portfolioID={portfolioID} marketValue={marketValue} setMarketValue={setMarketValue}/>
+                <StockHoldingList cashAccount={portfolioInfo.cash_account} portfolioID={portfolioID} />
             </div>
             <button className='trans-history' onClick={() => setOpenTransaction(true)}>View Stock Transaction List</button>
             <button className='add-stocks' onClick={() => setOpenStocks(true)}>Add Stocks to Holdings</button>
