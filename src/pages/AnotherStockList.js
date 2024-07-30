@@ -1,6 +1,6 @@
 import Header from '../components/Header';
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function AnotherStockList(){
     const uid = localStorage.getItem('userid');
@@ -12,8 +12,17 @@ export default function AnotherStockList(){
     const [reviewsList, setReviewsList] = useState([]);
 
     const [isEditing, setIsEditing] = useState(false);
-    const [editText, setEditText] = useState('');
+    const [editText, setEditText] = useState('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ');
     
+    const ref = useRef(null);
+    const [maxHeight, setMaxHeight] = useState(0);
+
+    useEffect(() => {
+        if(ref.current){
+            setMaxHeight(ref.current.offsetHeight);
+        }
+    }, []);
+
     const inputChange = (value) => {
        setEditText(value); 
     }
@@ -21,6 +30,9 @@ export default function AnotherStockList(){
     function handleEdit(review){
         setIsEditing(true);
         setEditText(review.review_text);
+        if(ref.current){
+            setMaxHeight(ref.current.offsetHeight);
+        }
     }
     
     function handleSave(){
@@ -166,9 +178,9 @@ export default function AnotherStockList(){
                             </div>
                         </div>
                         { isEditing && review.reviewerid == uid ? (
-                            <input className='review-input' type='text' value={editText} onChange={(e) => inputChange(e.target.value)}/>
+                            <textarea style={{height: maxHeight}} className='review-input' type='text' value={editText} onChange={(e) => inputChange(e.target.value)}/>
                         ) : (
-                            <h4 className='review-text'>{review.review_text}</h4>
+                            <h4 ref={ref} className='review-text'>{review.review_text}</h4>
                         )}
                     </div>
                 ))}
