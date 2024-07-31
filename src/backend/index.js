@@ -691,3 +691,60 @@ app.get('/users', async (req, res) => {
 app.listen(5000, () => {
     console.log('Server is running on port 5000');
 });
+
+// ! GRAPHING
+
+app.get('/graphingWeek/:symbol', async (req, res) => {
+    try {
+        const { symbol } = req.params;
+        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
+        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '7 DAYS' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        res.json(stock.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get('/graphingMonth/:symbol', async (req, res) => {
+    try {
+        const { symbol } = req.params;
+        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
+        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '1 MONTH' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        res.json(stock.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get('/graphingQuarter/:symbol', async (req, res) => {
+    try {
+        const { symbol } = req.params;
+        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
+        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '3 MONTHS' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        res.json(stock.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get('/graphingYear/:symbol', async (req, res) => {
+    try {
+        const { symbol } = req.params;
+        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
+        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '1 YEAR' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        res.json(stock.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get('/graphing5Years/:symbol', async (req, res) => {
+    try {
+        const { symbol } = req.params;
+        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
+        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '5 YEARS' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        res.json(stock.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
