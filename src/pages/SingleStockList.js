@@ -6,6 +6,7 @@ import "./SingleStockList.css"
 import ShareSearch from '../components/SearchFriends/ShareSearch';
 import { useNavigate } from 'react-router-dom';
 import SingleStock from '../components/FullStockInfo/SingleStock';
+import List from '../components/StocksStockHolding/List';
 
 
 export default function SingleStockList(){
@@ -15,9 +16,11 @@ export default function SingleStockList(){
     const [stockListItems, setStockListItems] = useState([]);
     const [reviewsList, setReviewsList] = useState([]);
     const [openSearch, setOpenSearch] = useState(false);
-    const navigate = useNavigate();
     const [openAnalytics, setOpenAnalytics] = useState(false);
     const [mySymbol, setStockSymbol] = useState('');
+    const [openStocks, setOpenStocks] = useState(false);
+    const [view, setView] = useState('analytics');
+    const navigate = useNavigate();
 
     useEffect(() => {
         ( async () => {
@@ -108,6 +111,41 @@ export default function SingleStockList(){
         setStockSymbol(symbol);
     }
 
+    function handleAddStock() {
+        setOpenStocks(true);
+    }
+
+    function handleEditStock() {
+        if(view === 'analytics'){
+            setView('edit');
+        } else if(view === 'edit'){
+            setView('analytics');
+        }
+        
+    }
+
+    function handleEditAdd(){
+        // increment share
+    }
+
+    function handleEditSub(){
+        // decrement share
+    }
+
+    function handleDeleteStock(symbol) {
+        // delete stock from list
+    }
+
+
+    if (openAnalytics) {
+        return (
+            <div>
+                <Header profile={true}></Header>
+                <SingleStock closeStockInfo={setOpenAnalytics} stockSymbol={mySymbol} />
+            </div>
+        );
+    }
+
     if (openSearch) {
         return (
             <div>
@@ -116,6 +154,15 @@ export default function SingleStockList(){
             </div>
         );
     }
+    if (openStocks) {
+        return (
+            <div>
+                <Header profile={true}/>
+                <List stocklist={setOpenStocks}/>
+            </div>
+        );
+    }
+
     if (openAnalytics) {
         return (
             <div>
@@ -128,7 +175,7 @@ export default function SingleStockList(){
             <Header profile={true}></Header>
             <div className="stock-list">
                 <h1 className='stock-list-title'>Stock List: {listId}</h1>
-                <button style={{background: "red"}} onClick={() => deleteStockList()}>Delete Stock List</button>
+                <button style={{background: "#8b4a4a"}} onClick={() => deleteStockList()}>Delete Stock List</button>
                 <div className="toggleContainer">
                     {isVisible === false && (
                         <button className="share-button" onClick={() => setOpenSearch(true)}>Share</button>
@@ -149,17 +196,38 @@ export default function SingleStockList(){
             <table className='stock-list-table'>
                 <thead>
                     <tr>
-                        <th scope='col' className='col-analytics'>Analytics</th>
+                        { view === 'analytics' && (
+                            <th scope='col' className='col-analytics'>Analytics</th>
+                        )}
+                        { view === 'edit' && (
+                            <th scope='col' className='col-analytics'>Edit Shares</th>
+                        )}
                         <th scope="col">Stock Symbol</th>
                         <th scope="col">Amount Owned</th>
+                        { view === 'edit' && (
+                            <th scope='col' className='col-analytics'></th>
+                        )}
                     </tr>
                 </thead>
                 <tbody className='stock-list-item'>
                     {stockListItems.map((item) => (
                         <tr>
-                            <td  className='col-analytics'><button className='analytics-button' onClick={() => handleAnalytics(item.symbol)}>View</button></td>
+                            { view === 'analytics' && (
+                                <td className='col-analytics'><button className='analytics-button' onClick={() => handleAnalytics(item.symbol)}>View</button></td>
+                            )}
+                            { view === 'edit' && (
+                                <div>
+                                    <td className='col-edit'>
+                                        <button className='edit-add-button' onClick={() => handleEditAdd(item.symbol)}>+</button>
+                                        <button className='edit-sub-button' onClick={() => handleEditAdd(item.symbol)}>-</button>
+                                    </td>
+                                </div>  
+                            )}
                             <td>{item.symbol}</td>
                             <td>{item.num_shares}</td>
+                            { view === 'edit' && (
+                                <td className='col-analytics'><button className='col-remove' onClick={() => handleDeleteStock(item.symbol)}>Delete</button></td>
+                            )}
                         </tr>
                     ))}
                 </tbody>
@@ -170,7 +238,15 @@ export default function SingleStockList(){
                 )}
             </div>
             <div className="add-button-container">
-                <button className='add-button'>Add stocks to list</button>  
+                { view === 'analytics' && (
+                    <button className='add-button' onClick={handleEditStock}>Edit Stock List</button>
+                )}
+                { view === 'edit' && (
+                    <div>
+                        <button className='add-button' onClick={() => setView('analytics')}>Save</button>
+                        <button className='add-button' onClick={handleAddStock}>Add stocks to list</button>  
+                    </div>
+                )}
             </div>
             <div className='reviews'>
                 <h2 className='review-title'>Reviews</h2>

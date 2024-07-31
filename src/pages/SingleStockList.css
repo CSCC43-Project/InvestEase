@@ -223,6 +223,32 @@
     width: 100px
   }
 
+  .col-edit {
+    display: flex;
+  }
+
+  .edit-add-button {
+    background-color: #1E5945;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 20px;
+  }
+
+  .edit-sub-button {
+    background-color: #8b4a4a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 20px;
+  }
+
   .table {
     table-layout: fixed;
     width: 100%;
@@ -238,4 +264,15 @@
     font-size: 18px;
     margin-right: 20px;
     margin-left: 20px;
+  }
+
+  .col-remove{
+    background-color: #8b4a4a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 20px;
   }

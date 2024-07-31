@@ -20,6 +20,7 @@ export default function AnotherStockList(){
     const [maxHeight, setMaxHeight] = useState(0);
 
     const [isPublic, setIsPublic] = useState(false);
+
     const [openAnalytics, setOpenAnalytics] = useState(false);
     const [mySymbol, setStockSymbol] = useState('');
 
@@ -30,6 +31,12 @@ export default function AnotherStockList(){
     const inputChangeAdd = (value) => {
         setAddText(value); 
      }
+
+     function handleAnalytics(symbol){
+        setOpenAnalytics(true);
+        setStockSymbol(symbol);
+    }
+
 
     function handleEdit(review){
         setIsEditing(true);
@@ -149,13 +156,10 @@ export default function AnotherStockList(){
         })();
     };
 
-    function handleAnalytics(symbol) {
-        setOpenAnalytics(true);
-        setStockSymbol(symbol);
-    }
     if (openAnalytics) {
         return (
             <div>
+                <Header profile={true}></Header>
                 <SingleStock closeStockInfo={setOpenAnalytics} stockSymbol={mySymbol} />
             </div>
         );
