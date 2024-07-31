@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import SingleResult from './SingleResult';
 import './StocksStockHolding.css';
 
-export default function List({ stocklist }) {
+export default function List({ stocklist , listBool, holdingBool, id}) {
     const [latestStocks, setLatestStocks] = useState([]);
     const searchBarRef = useRef(null);
     const searchButtonRef = useRef(null);
@@ -43,7 +43,12 @@ export default function List({ stocklist }) {
     
     return(
         <div>
-            <h1 className='title'>Add Stocks to Stock Holding</h1>
+            { listBool && (
+                <h1 className='title'>Add Stocks to Stock List: {id}</h1>
+            )}
+            { holdingBool && (
+                <h1 className='title'>Add Stocks to Stock Holding</h1>
+            )}
             <div className='search'>
                 <h2 className='stockheader'> Search for Stocks</h2>
                 <div className='searc'>
@@ -66,7 +71,7 @@ export default function List({ stocklist }) {
                     </thead>
                     <tbody className='stocks'>
                         {latestStocks.map((stock) => (
-                            <SingleResult stock={stock}/>
+                            <SingleResult stock={stock} listBool={listBool} holdingBool={holdingBool} id={id}/>
                         ))}
                     </tbody>
                 </table>

@@ -106,6 +106,50 @@ export default function SingleStockList(){
         })();
     };
 
+    const deleteStock = (symbol) => {
+        ( async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/deletestock/${uid}/${listId}/${symbol}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                setStockListItems(stockListItems.filter((stock) => stock.symbol !== symbol));
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
+    }
+
+    const addStock = (symbol) => {
+        ( async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/addshare/${uid}/${listId}/${symbol}`, {
+                    method: 'PUT'
+                });
+                const data = await res.json();
+                setStockListItems(data);
+            } catch (error) {
+                console.error(error.message);
+            }
+        })()
+    }
+
+    const subStock = (symbol) => {
+        ( async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/subshare/${uid}/${listId}/${symbol}`, {
+                    method: 'PUT'
+                });
+                const data = await res.json();
+                if(res.ok){
+                    setStockListItems(data)
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
+        })()
+    }
+
     function handleAnalytics(symbol){
         setOpenAnalytics(true);
         setStockSymbol(symbol);
@@ -123,19 +167,6 @@ export default function SingleStockList(){
         }
         
     }
-
-    function handleEditAdd(){
-        // increment share
-    }
-
-    function handleEditSub(){
-        // decrement share
-    }
-
-    function handleDeleteStock(symbol) {
-        // delete stock from list
-    }
-
 
     if (openAnalytics) {
         return (
@@ -158,7 +189,7 @@ export default function SingleStockList(){
         return (
             <div>
                 <Header profile={true}/>
-                <List stocklist={setOpenStocks}/>
+                <List stocklist={setOpenStocks} listBool={true} holdingBool={false} id={listId}/>
             </div>
         );
     }
@@ -218,15 +249,15 @@ export default function SingleStockList(){
                             { view === 'edit' && (
                                 <div>
                                     <td className='col-edit'>
-                                        <button className='edit-add-button' onClick={() => handleEditAdd(item.symbol)}>+</button>
-                                        <button className='edit-sub-button' onClick={() => handleEditAdd(item.symbol)}>-</button>
+                                        <button className='edit-add-button' onClick={() => addStock(item.symbol)}>+</button>
+                                        <button className='edit-sub-button' onClick={() => subStock(item.symbol)}>-</button>
                                     </td>
                                 </div>  
                             )}
                             <td>{item.symbol}</td>
                             <td>{item.num_shares}</td>
                             { view === 'edit' && (
-                                <td className='col-analytics'><button className='col-remove' onClick={() => handleDeleteStock(item.symbol)}>Delete</button></td>
+                                <td className='col-analytics'><button className='col-remove' onClick={() => deleteStock(item.symbol)}>Delete</button></td>
                             )}
                         </tr>
                     ))}

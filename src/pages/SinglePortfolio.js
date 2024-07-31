@@ -84,7 +84,7 @@ export default function SinglePortfolio() {
         return (
             <div>
                 <Header profile={true}/>
-                <List stocklist={setOpenStocks}/>
+                <List stocklist={setOpenStocks} listBool={false} holdingBool={true} id={portfolioID}/>
             </div>
         );
     }
