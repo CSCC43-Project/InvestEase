@@ -1,6 +1,7 @@
 import Header from '../components/Header';
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
+import SingleStock from '../components/FullStockInfo/SingleStock';
 
 export default function AnotherStockList(){
     const uid = localStorage.getItem('userid');
@@ -19,6 +20,8 @@ export default function AnotherStockList(){
     const [maxHeight, setMaxHeight] = useState(0);
 
     const [isPublic, setIsPublic] = useState(false);
+    const [openAnalytics, setOpenAnalytics] = useState(false);
+    const [mySymbol, setStockSymbol] = useState('');
 
     const inputChangeEdit = (value) => {
        setEditText(value); 
@@ -146,10 +149,17 @@ export default function AnotherStockList(){
         })();
     };
 
-    function handleAnalytics(){
-        
+    function handleAnalytics(symbol) {
+        setOpenAnalytics(true);
+        setStockSymbol(symbol);
     }
-
+    if (openAnalytics) {
+        return (
+            <div>
+                <SingleStock closeStockInfo={setOpenAnalytics} stockSymbol={mySymbol} />
+            </div>
+        );
+    }
     return (
         <div>
             <Header profile={true}/>
@@ -165,7 +175,7 @@ export default function AnotherStockList(){
                 <tbody className='stock-list-item'>
                     {stockListItems.map((item) => (
                         <tr key={item.symbol}>
-                            <td  className='col-analytics'><button className='analytics-button' onClick={handleAnalytics()}>View</button></td>
+                            <td  className='col-analytics'><button className='analytics-button' onClick={() => handleAnalytics(item.symbol)}>View</button></td>
                             <td>{item.symbol}</td>
                             <td>{item.num_shares}</td>
                         </tr>

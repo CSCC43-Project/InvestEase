@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import "./SingleStockList.css"
 import ShareSearch from '../components/SearchFriends/ShareSearch';
 import { useNavigate } from 'react-router-dom';
+import SingleStock from '../components/FullStockInfo/SingleStock';
 
 
 export default function SingleStockList(){
@@ -15,6 +16,8 @@ export default function SingleStockList(){
     const [reviewsList, setReviewsList] = useState([]);
     const [openSearch, setOpenSearch] = useState(false);
     const navigate = useNavigate();
+    const [openAnalytics, setOpenAnalytics] = useState(false);
+    const [mySymbol, setStockSymbol] = useState('');
 
     useEffect(() => {
         ( async () => {
@@ -100,8 +103,9 @@ export default function SingleStockList(){
         })();
     };
 
-    function handleAnalytics(){
-
+    function handleAnalytics(symbol){
+        setOpenAnalytics(true);
+        setStockSymbol(symbol);
     }
 
     if (openSearch) {
@@ -109,6 +113,13 @@ export default function SingleStockList(){
             <div>
                 <Header profile={true}></Header>
                 <ShareSearch search={setOpenSearch}></ShareSearch>
+            </div>
+        );
+    }
+    if (openAnalytics) {
+        return (
+            <div>
+                <SingleStock closeStockInfo={setOpenAnalytics} stockSymbol={mySymbol} />
             </div>
         );
     }
@@ -146,7 +157,7 @@ export default function SingleStockList(){
                 <tbody className='stock-list-item'>
                     {stockListItems.map((item) => (
                         <tr>
-                            <td  className='col-analytics'><button className='analytics-button' onClick={handleAnalytics()}>View</button></td>
+                            <td  className='col-analytics'><button className='analytics-button' onClick={() => handleAnalytics(item.symbol)}>View</button></td>
                             <td>{item.symbol}</td>
                             <td>{item.num_shares}</td>
                         </tr>
