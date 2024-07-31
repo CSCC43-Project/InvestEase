@@ -72,7 +72,6 @@ export default function UserProfile() {
                 <div className='doing-stuff'>
                     <button onClick={handlePortfolio}>Access Portfolios</button>
                     <button onClick={handleStockLists}>Manage Stock List</button>
-                    <button>Analyze Performance</button>
                     <button onClick={() => setOpenSearch(true)}>Add Friends</button>
                 </div>
             </div>
