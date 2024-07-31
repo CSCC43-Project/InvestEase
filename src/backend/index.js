@@ -35,6 +35,7 @@ app.post('/registerUser', async (req, res) => {
         } else {
             const user = await pool.query("INSERT INTO users (userid, email, profilepic_url, username, password) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [count, email, profilePic, username, password]);
         }
+        const firstPortfolio = await pool.query("INSERT INTO portfolio (userid, portfolioid, cash_account) VALUES ($1, $2, 0) RETURNING *", [count, 1])
         res.json({response: `${username} added successfully`, userid: count});
     } catch (error) {
         console.error(error.message);
