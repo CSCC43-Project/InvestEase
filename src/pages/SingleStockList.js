@@ -107,39 +107,47 @@ export default function SingleStockList(){
     };
 
     const deleteStock = (symbol) => {
-        // ( async () => {
-        //     try {
-        //         const res = await fetch(`http://localhost:5000/deletestock/${uid}/${listId}/${symbol}`);
-        //         const data = await res.json();
-        //         window.location.reload();
-        //     } catch (error) {
-        //         console.error(error.message);
-        //     }
-        // })
+        ( async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/deletestock/${uid}/${listId}/${symbol}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                setStockListItems(stockListItems.filter((stock) => stock.symbol !== symbol));
+            } catch (error) {
+                console.error(error.message);
+            }
+        })();
     }
 
     const addStock = (symbol) => {
-        // ( async () => {
-        //     try {
-        //         const res = await fetch(`http://localhost:5000/addstock/${uid}/${listId}/${symbol}`);
-        //         const data = await res.json();
-        //         window.location.reload();
-        //     } catch (error) {
-        //         console.error(error.message);
-        //     }
-        // })
+        ( async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/addshare/${uid}/${listId}/${symbol}`, {
+                    method: 'PUT'
+                });
+                const data = await res.json();
+                setStockListItems(data);
+            } catch (error) {
+                console.error(error.message);
+            }
+        })()
     }
 
     const subStock = (symbol) => {
-        // ( async () => {
-        //     try {
-        //         const res = await fetch(`http://localhost:5000/substock/${uid}/${listId}/${symbol}`);
-        //         const data = await res.json();
-        //         window.location.reload();
-        //     } catch (error) {
-        //         console.error(error.message);
-        //     }
-        // })
+        ( async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/subshare/${uid}/${listId}/${symbol}`, {
+                    method: 'PUT'
+                });
+                const data = await res.json();
+                if(res.ok){
+                    setStockListItems(data)
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
+        })()
     }
 
     function handleAnalytics(symbol){

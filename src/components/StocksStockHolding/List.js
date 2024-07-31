@@ -43,7 +43,12 @@ export default function List({ stocklist , listBool, holdingBool, id}) {
     
     return(
         <div>
-            <h1 className='title'>Add Stocks to Stock Holding</h1>
+            { listBool && (
+                <h1 className='title'>Add Stocks to Stock List: {id}</h1>
+            )}
+            { holdingBool && (
+                <h1 className='title'>Add Stocks to Stock Holding</h1>
+            )}
             <div className='search'>
                 <h2 className='stockheader'> Search for Stocks</h2>
                 <div className='searc'>
@@ -66,7 +71,7 @@ export default function List({ stocklist , listBool, holdingBool, id}) {
                     </thead>
                     <tbody className='stocks'>
                         {latestStocks.map((stock) => (
-                            <SingleResult stock={stock} listBool={listBool} holdingBool={holdingBool} id = {id}/>
+                            <SingleResult stock={stock} listBool={listBool} holdingBool={holdingBool} id={id}/>
                         ))}
                     </tbody>
                 </table>
