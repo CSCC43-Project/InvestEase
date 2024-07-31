@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import SingleResult from './SingleResult';
 import './StocksStockHolding.css';
 
-export default function List({ stocklist }) {
+export default function List({ stocklist , listBool, holdingBool, id}) {
     const [latestStocks, setLatestStocks] = useState([]);
     const searchBarRef = useRef(null);
     const searchButtonRef = useRef(null);
@@ -66,7 +66,7 @@ export default function List({ stocklist }) {
                     </thead>
                     <tbody className='stocks'>
                         {latestStocks.map((stock) => (
-                            <SingleResult stock={stock}/>
+                            <SingleResult stock={stock} listBool={listBool} holdingBool={holdingBool} id = {id}/>
                         ))}
                     </tbody>
                 </table>

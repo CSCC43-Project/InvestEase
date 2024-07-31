@@ -478,6 +478,52 @@ app.delete('/stocklists/:ownerid/:stocklistid', async (req, res) => {
     }
 });
 
+app.post('/addstocklist/:listid/:userid', async (req, res) => {
+    try {
+        const { listid, ownerid } = req.params;
+        const { stock_symbol, timestamp, num_shares } = req.body;
+        const newStockListItem = await pool.query('INSERT INTO stock_list_item (stocklistid, ownerid, stock_symbol, timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *', [listid, ownerid, stock_symbol, timestamp, num_shares]);
+        res.json(newStockListItem.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.delete('/deletestock/:uid/:listId/:symbol', async (req,res) => {
+    try {
+        const { uid, listId, symbol } = req.params;
+        const deleteStock = await pool.query('DELETE FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2 AND stock_symbol = $3', [uid, listId, symbol]);
+        res.json(deleteStock.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+})
+
+app.put('/addshare/:uid/:listId/:symbol', async (req, res) => {
+    try {
+        const { uid, listId, symbol } = req.params;
+        const addShare = await pool.query('UPDATE stock_list_item SET num_shares = num_shares + 1 WHERE ownerid = $1 AND stocklistid = $2 AND stock_symbol = $3', [uid, listId, symbol]);
+        res.json(addShare.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.put('/subshare/:uid/:listId/:symbol', async (req, res) => {
+    try {
+        const { uid, listId, symbol } = req.params;
+        const getShares = await pool.query('SELECT num_shares FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2 AND stock_symbol = $3', [uid, listId, symbol]);
+        if(getShares.rows[0].num_shares == 0){
+            res.json({response: "No stock left"});
+        } else {
+            const subShare = await pool.query('UPDATE stock_list_item SET num_shares = num_shares - 1 WHERE ownerid = $1 AND stocklistid = $2 AND stock_symbol = $3', [uid, listId, symbol]);
+            res.json(subShare.rows);
+        }
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 app.get("/stocklistcount/:id", async (req, res) => {
     try {
         const { id } = req.params;
