@@ -154,7 +154,6 @@ export default function SingleStockList(){
             </div>
         );
     }
-
     if (openStocks) {
         return (
             <div>
@@ -164,6 +163,13 @@ export default function SingleStockList(){
         );
     }
 
+    if (openAnalytics) {
+        return (
+            <div>
+                <SingleStock closeStockInfo={setOpenAnalytics} stockSymbol={mySymbol} />
+            </div>
+        );
+    }
     return (
         <div>
             <Header profile={true}></Header>

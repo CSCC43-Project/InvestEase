@@ -32,6 +32,12 @@ export default function AnotherStockList(){
         setAddText(value); 
      }
 
+     function handleAnalytics(symbol){
+        setOpenAnalytics(true);
+        setStockSymbol(symbol);
+    }
+
+
     function handleEdit(review){
         setIsEditing(true);
         setEditText(review.review_text);
@@ -150,11 +156,6 @@ export default function AnotherStockList(){
         })();
     };
 
-    function handleAnalytics(symbol){
-        setOpenAnalytics(true);
-        setStockSymbol(symbol);
-    }
-
     if (openAnalytics) {
         return (
             <div>
@@ -163,7 +164,6 @@ export default function AnotherStockList(){
             </div>
         );
     }
-
     return (
         <div>
             <Header profile={true}/>

@@ -12,3 +12,11 @@ Table thead {
     justify-content: space-between;
     align-items: center;
 }
+
+.guh {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #1E5945;
+}
