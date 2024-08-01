@@ -426,6 +426,17 @@ app.get('/stocklists/:uid/:ownerid', async (req, res) => {
     }
 });
 
+app.put(`/updatevolume/:symbol`, async (req, res) => {
+    try {
+        const { symbol } = req.params;
+        const { volume } = req.body;
+        const updateVolume = await pool.query('UPDATE stocks SET volume = volume + $2 WHERE symbol = $1 RETURNING *', [symbol, volume]);
+        res.json(updateVolume.rows);
+    } catch (error) {
+        console.message(error)
+    }
+});
+
 app.get('/publicstocklists/:ownerid', async (req, res) => {
     try {
         const { ownerid } = req.params;

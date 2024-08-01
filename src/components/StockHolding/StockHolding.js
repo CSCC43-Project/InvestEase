@@ -22,13 +22,27 @@ export default function StockHolding({ stock, cashAccount, openAnalytics, stockS
             setCost((tempAmount - 1) * latestStockPrice);
         }
     }
-    function confirmSale() {
-        setConfirm(true);
-        updateShares(stock.num_shares + tempAmount);
-        updateCash(cashAccount - cost);
-        createTransaction();
-        setTempAmount(0);
-        setCost(0);
+    async function confirmSale() {
+        try {
+            const res = await fetch(`http://localhost:5000/updatevolume/${stock.stock_symbol}`, {
+                method: "PUT",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ volume: Math.abs(tempAmount) })
+            })
+            const data = await res.json();
+            if(data){
+                updateShares(stock.num_shares + tempAmount);
+                updateCash(cashAccount - cost);
+                createTransaction();
+            } else {
+                alert(`Not enough volume to purchase stock: ${stock.stock_symbol}`)
+            }
+            setConfirm(true);
+            setTempAmount(0);
+            setCost(0);
+        } catch (error) {
+            console.error(error);
+        }
     }
     function rejectSale() {
         setConfirm(false);
