@@ -119,8 +119,8 @@ export default function SinglePortfolio() {
             <div className='portfolio' style={{ color: 'white', padding: 5 }}>
                 <div className='full-p-info'>
                     <div className='portfolio-info'>
-                            <h1>{userInfo.username}'s Portfolio #{portfolioInfo.portfolioid}</h1>
-                            <button onClick={() => setOpenStatistics(true)}>View Portfolio Statistics</button>
+                        <h1>{userInfo.username}'s Portfolio #{portfolioInfo.portfolioid}</h1>
+                        <button onClick={() => setOpenStatistics(true)}>View Portfolio Statistics</button>
                     </div>
                     <h2 className='account'><span style={{ color: 'black' }}>Cash Account</span>: ${portfolioInfo.cash_account}</h2>
                     <p className='account'><span style={{ color: 'black' }}>Estimated present market value</span>: {marketValue + portfolioInfo.cash_account}</p>

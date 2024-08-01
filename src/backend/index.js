@@ -410,7 +410,7 @@ app.post('/addstocks', async (req, res) => {
 app.get('/stocklists/:uid/:ownerid', async (req, res) => {
     try {
         const { uid, ownerid } = req.params;
-        const stockLists = await pool.query('SELECT stocklistid FROM stock_list WHERE ownerid = $2 AND is_public = true UNION SELECT stocklistid from shared_stock_list WHERE shared_userid = $1', [uid, ownerid]);
+        const stockLists = await pool.query('SELECT stocklistid FROM stock_list WHERE ownerid = $2 AND is_public = true UNION SELECT stocklistid from shared_stock_list WHERE shared_userid = $1 AND ownerid = $2', [uid, ownerid]);
         res.json(stockLists.rows);
     } catch (error) {
         console.error(error.message);

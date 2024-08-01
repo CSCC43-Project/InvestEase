@@ -1,10 +1,16 @@
+import { useNavigate } from 'react-router-dom';
 import '../FriendList/Friend.css'
 import { useState, useEffect } from 'react';
 
 function Friend({id}) {
     const uid = localStorage.getItem('userid');
+    const navigate = useNavigate();
     const [friend, setFriend] = useState([]);
     const [friendCount, setFriendCount] = useState(0);
+
+    function handleClick(){
+        navigate(`/profile/${id}`);
+    }
     useEffect(() => {
         (async () => {
             try {
@@ -44,7 +50,7 @@ function Friend({id}) {
     return (
         <div className='singlefriend'>
             <img className="profilepic" src={friend.profilepic_url}></img>
-            <div className='friend-info'>
+            <div className='friend-info' onClick={handleClick}>
                 <h1>{friend.username}</h1>
                 <div className='extra-info'>
                     <p>{friendCount} Friends</p>
