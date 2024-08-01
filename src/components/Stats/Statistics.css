@@ -1,0 +1,33 @@
+
+.stats-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.stats-title {
+    margin-left: 50px;
+}
+
+.stats-title-button {
+  background-color: #1E5945;
+  color: white;
+  border: none;
+  padding: 20px 30px;
+  border-radius: 5px; 
+  cursor: pointer;
+  font-size: 18px;
+  margin-right: 20px;
+}
+
+
+.stats-subtitle {
+    margin-left: 70px;
+    font-size: 27px;
+}
+
+.stats-matrix {
+    justify-content: center;
+}

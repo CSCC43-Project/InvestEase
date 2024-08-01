@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import SingleStatistics from './SingleStatistics';
+import './Statistics.css'
 
 export default function Statistics({ setOpenStatistics, isPortfolio }) {
     const uid = localStorage.getItem('userid');
@@ -112,9 +113,9 @@ export default function Statistics({ setOpenStatistics, isPortfolio }) {
 
     return (
         <div>
-            <div>
-                <h1>Portfolio Statistics</h1>
-                <button onClick={() => setOpenStatistics(false)}>Back</button>
+            <div className='stats-title-container'>
+                <h1 className='stats-title'>Portfolio Statistics</h1>
+                <button className='stats-title-button' onClick={() => setOpenStatistics(false)}>Back</button>
             </div>
             <table>
                 <thead>
@@ -130,7 +131,8 @@ export default function Statistics({ setOpenStatistics, isPortfolio }) {
                     ))}
                 </tbody>
             </table>
-            <table>
+            <h2 className='stats-subtitle'>Covariance Matrix</h2>
+            <table className='stats-matrix'>
                 <thead>
                     <tr>
                         <th scope="col">Stock Symbol</th>
@@ -150,7 +152,8 @@ export default function Statistics({ setOpenStatistics, isPortfolio }) {
                     ))}
                 </tbody>
             </table>
-            <table>
+            <h2 className='stats-subtitle'>Correlation Matrix</h2>
+            <table className='stats-matrix'>
                 <thead>
                     <tr>
                         <th scope="col">Stock Symbol</th>
