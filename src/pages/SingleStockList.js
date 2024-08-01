@@ -7,7 +7,7 @@ import ShareSearch from '../components/SearchFriends/ShareSearch';
 import { useNavigate } from 'react-router-dom';
 import SingleStock from '../components/FullStockInfo/SingleStock';
 import List from '../components/StocksStockHolding/List';
-
+import Statistics from '../components/Stats/Statistics';
 
 export default function SingleStockList(){
     const uid = localStorage.getItem('userid');
@@ -21,6 +21,7 @@ export default function SingleStockList(){
     const [openStocks, setOpenStocks] = useState(false);
     const [view, setView] = useState('analytics');
     const navigate = useNavigate();
+    const [openStats, setOpenStats] = useState(false);
 
     useEffect(() => {
         ( async () => {
@@ -194,18 +195,21 @@ export default function SingleStockList(){
         );
     }
 
-    if (openAnalytics) {
+    if (openStats) {
         return (
             <div>
-                <SingleStock closeStockInfo={setOpenAnalytics} stockSymbol={mySymbol} />
+                <Header profile={true} />
+                <Statistics setOpenStatistics={setOpenStats} isPortfolio={false} id={listId} uid = {uid}/>
             </div>
         );
     }
+
     return (
         <div>
             <Header profile={true}></Header>
             <div className="stock-list">
                 <h1 className='stock-list-title'>Stock List: {listId}</h1>
+                <button onClick={() => setOpenStats(true)}>View Statistics</button>
                 <button style={{background: "#8b4a4a"}} onClick={() => deleteStockList()}>Delete Stock List</button>
                 <div className="toggleContainer">
                     {isVisible === false && (

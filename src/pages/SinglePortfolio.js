@@ -109,7 +109,7 @@ export default function SinglePortfolio() {
         return (
             <div>
                 <Header profile={true} />
-                <Statistics setOpenStatistics={setOpenStatistics} isPortfolio={true}/>
+                <Statistics setOpenStatistics={setOpenStatistics} isPortfolio={true}  id={portfolioID} uid = {uid}/>
             </div>
         );
     }
