@@ -28,7 +28,14 @@ export default function SingleStatistics({ setOpenStatistics, stock_symbol }) {
 
     return (
         <tr key={stock_symbol}>
-            <td>{stock_symbol}</td>
+            <td>
+                {stock_symbol}: 
+                { beta > 1 ? (
+                    "Volatile"
+                ) : (
+                    "Not Volatile"
+                )}
+            </td>
             <td>{variation}</td>
             <td>{beta}</td>
         </tr>
