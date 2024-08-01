@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import List from '../components/StocksStockHolding/List';
 import SingleStock from '../components/FullStockInfo/SingleStock';
+import Statistics from '../components/Stats/Statistics';
 
 export default function SinglePortfolio() {
     const uid = localStorage.getItem('userid');
@@ -18,6 +19,7 @@ export default function SinglePortfolio() {
     const [marketValue, setMarketValue] = useState(0);
     const [openAnalytics, setOpenAnalytics] = useState(false);
     const [mySymbol, setStockSymbol] = useState('');
+    const [openStatistics, setOpenStatistics] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -103,6 +105,14 @@ export default function SinglePortfolio() {
             </div>
         );
     }
+    if (openStatistics) {
+        return (
+            <div>
+                <Header profile={true} />
+                <Statistics setOpenStatistics={setOpenStatistics} isPortfolio={true}/>
+            </div>
+        );
+    }
     return (
         <div>
             <Header profile={true} />
@@ -110,7 +120,7 @@ export default function SinglePortfolio() {
                 <div className='full-p-info'>
                     <div className='portfolio-info'>
                             <h1>{userInfo.username}'s Portfolio #{portfolioInfo.portfolioid}</h1>
-                            <button>View Portfolio Statistics</button>
+                            <button onClick={() => setOpenStatistics(true)}>View Portfolio Statistics</button>
                     </div>
                     <h2 className='account'><span style={{ color: 'black' }}>Cash Account</span>: ${portfolioInfo.cash_account}</h2>
                     <p className='account'><span style={{ color: 'black' }}>Estimated present market value</span>: {marketValue + portfolioInfo.cash_account}</p>

@@ -754,7 +754,7 @@ app.get('/graphing5Years/:symbol', async (req, res) => {
 
 // ! NEW STUFF
 // GET COEFFICIENT OF VARIATION FOR ALL STOCKS
-app.get('/statisticsWeek', async (req, res) => {
+app.get('/statistics', async (req, res) => {
     try {
         const statistics = await pool.query("SELECT symbol,(STDDEV_POP(close) / AVG(close)) AS coefficient_of_variation FROM stocks \
 WHERE timestamp BETWEEN (SELECT timestamp FROM stocks WHERE symbol = symbol ORDER BY timestamp ASC LIMIT 1) AND now() GROUP BY symbol");
@@ -765,7 +765,7 @@ WHERE timestamp BETWEEN (SELECT timestamp FROM stocks WHERE symbol = symbol ORDE
 });
 
 // GET COEFFICIENT OF VARIATION FOR A SPECIFIC STOCK
-app.get('/statisticsWeek/:symbol', async (req, res) => {
+app.get('/statistics/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
         const statistics = await pool.query("SELECT symbol,(STDDEV_POP(close) / AVG(close)) AS coefficient_of_variation FROM stocks \
