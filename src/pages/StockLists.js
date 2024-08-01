@@ -7,6 +7,8 @@ export default function StockLists(){
     let uid = localStorage.getItem('userid');
     const navigate = useNavigate();
     const [stockLists, setStockLists] = useState([]);
+    const [isPublic, setIsPublic] = useState(false);
+    const [isShared, setIsShared] = useState(false);
 
     function handleClick(listId) {
         navigate(`/mystocklists/${listId}`)
@@ -23,6 +25,22 @@ export default function StockLists(){
             }
         })();
     }, []);
+
+    // need to get listid
+    // useEffect(() => {
+    //     ( async () => {
+    //         try {
+    //             const res = await fetch(`http://localhost:5000/listvisibility/${uid}/${listId}`);
+    //             const data = await res.json();
+    //             setIsPublic(data.is_public);
+    //             const res2 = await fetch(`http://localhost:5000/isshared/${uid}/${listId}`);
+    //             const jsonData2 = await res2.json();
+    //             setIsShared(jsonData2);
+    //         } catch (error) {
+    //             console.error(error.message)
+    //         }
+    //     })()
+    // })
 
     async function addStockList() {
         try {

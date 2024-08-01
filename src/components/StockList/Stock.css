@@ -25,6 +25,7 @@
 
 .category-public {
     background-color: green;
+    color: white;
     border-radius: 5px;
     margin-top: 15px;
     margin-bottom: 15px;
@@ -37,6 +38,7 @@
 
 .category-shared {
     background-color: #8b4a4a;
+    color: white;
     border-radius: 5px;
     margin-top: 15px;
     margin-bottom: 15px;

@@ -585,6 +585,16 @@ app.post("/sharedstocklist/:stocklistid/:ownerid", async (req, res) => {
     }
 });
 
+app.get('/isshared/:stocklistid/:ownerid', async (req, res) => {
+    try {
+        const { stocklistid, ownerid } = req.params;
+        const sharedStockList = await pool.query("SELECT COUNT(*) FROM shared_stock_list WHERE ownerid = $2 AND stocklistid = $1", [stocklistid, ownerid]);
+        res.json(sharedStockList.rows[0].count > 0);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 // ! REVIEW PAGE
 app.get('/ownerreviews/:ownerid/:stockListId', async (req, res) => {
     try {
