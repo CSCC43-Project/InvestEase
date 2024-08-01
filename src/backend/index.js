@@ -239,6 +239,15 @@ app.post('/checkLogin', async (req, res) => {
             console.error(error.message);
         }
     });
+    app.get("/getportfolios/:uid/:portfolioid", async (req, res) => {
+        try {
+            const { uid, portfolioid } = req.params;
+            const portfolio = await pool.query("SELECT * FROM portfolio WHERE userid = $1 AND portfolioid != $2", [uid, portfolioid]);
+            res.json(portfolio.rows);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
     app.get("/portfoliocount/:id", async (req, res) => {
         try {
             const { id } = req.params;

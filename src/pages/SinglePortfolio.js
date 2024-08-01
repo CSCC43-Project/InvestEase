@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import List from '../components/StocksStockHolding/List';
 import SingleStock from '../components/FullStockInfo/SingleStock';
 import Statistics from '../components/Stats/Statistics';
+import DepositPortfolio from './DepositPortfolio';
 
 export default function SinglePortfolio() {
     const uid = localStorage.getItem('userid');
@@ -20,6 +21,7 @@ export default function SinglePortfolio() {
     const [openAnalytics, setOpenAnalytics] = useState(false);
     const [mySymbol, setStockSymbol] = useState('');
     const [openStatistics, setOpenStatistics] = useState(false);
+    const [openDeposit, setOpenDeposit] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -113,6 +115,13 @@ export default function SinglePortfolio() {
             </div>
         );
     }
+    if (openDeposit) {
+        return (
+            <div>
+                <DepositPortfolio setOpenDeposit={setOpenDeposit}/>
+            </div>
+        );
+    }
     return (
         <div>
             <Header profile={true} />
@@ -125,15 +134,17 @@ export default function SinglePortfolio() {
                     <h2 className='account'><span style={{ color: 'black' }}>Cash Account</span>: ${portfolioInfo.cash_account}</h2>
                     <p className='account'><span style={{ color: 'black' }}>Estimated present market value</span>: {marketValue + portfolioInfo.cash_account}</p>
                 </div>
-                <h2 style={{ color: 'white' }}>Money Transactions</h2>
+                <div className='money-header'>
+                    <h2 style={{ color: 'white' }}>Money Transactions</h2>
+                    <p className='header-text'style={{ color: 'white' }}>: Deposit or withdraw money from your cash account</p>
+                </div>
             </div>
             <div className='money-transactions'>
-                <div>
-                    <p style={{ color: 'white' }}>Deposit or withdraw money from your cash account</p>
+                <button className='money' onClick={() => setOpenDeposit(true)}>Deposit</button>
+                <div className='money-transactions'>
+                    <input className='money-input' type='number' placeholder='Amount' value={amount} onChange={handleInputChange}></input>
+                    <button className='money-widthdraw' onClick={handleWithdraw}>Withdraw</button>
                 </div>
-                <input className='money-input' type='number' placeholder='Amount' value={amount} onChange={handleInputChange}></input>
-                <button className='money' onClick={handleDeposit}>Deposit</button>
-                <button className='money' onClick={handleWithdraw}>Withdraw</button>
             </div>
             <div>
                 <h1 style={{ color: 'white', paddingTop: 20 }}>Stock Holdings</h1>

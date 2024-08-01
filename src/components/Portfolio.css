@@ -78,3 +78,12 @@ button:hover {
     justify-content: space-between;
 }
 
+.money-header {
+    display: flex;
+    align-items: center;
+    margin: auto;
+}
+
+.header-text {
+    margin-right: 10px;
+}
