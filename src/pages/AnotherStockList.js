@@ -2,6 +2,7 @@ import Header from '../components/Header';
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import SingleStock from '../components/FullStockInfo/SingleStock';
+import Statistics from '../components/Stats/Statistics';
 
 export default function AnotherStockList(){
     const uid = localStorage.getItem('userid');
@@ -23,6 +24,7 @@ export default function AnotherStockList(){
 
     const [openAnalytics, setOpenAnalytics] = useState(false);
     const [mySymbol, setStockSymbol] = useState('');
+    const [openStats, setOpenStats] = useState(false);
 
     const inputChangeEdit = (value) => {
        setEditText(value); 
@@ -164,14 +166,25 @@ export default function AnotherStockList(){
             </div>
         );
     }
+    if (openStats) {
+        return (
+            <div>
+                <Header profile={true} />
+                <Statistics setOpenStatistics={setOpenStats} isPortfolio={false} id={listId} uid={ownerid}/>
+            </div>
+        );
+    }
     return (
         <div>
             <Header profile={true}/>
-            <h1 className='stock-list-title'> {ownerUsername}'s stock list: {listId}</h1>
+            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <h1 className='stock-list-title'> {ownerUsername}'s stock list: {listId}</h1>
+                <button style={{marginLeft: 'auto'}} onClick={() => setOpenStats(true)}>View Statistics</button>
+            </div>
             <table className='stock-list-table'>
                 <thead>
                     <tr>
-                    <th scope='col' className='col-analytics'>Analytics</th>
+                        <th scope='col' className='col-analytics'>Analytics</th>
                         <th scope="col">Stock Symbol</th>
                         <th scope="col">Amount Owned</th>
                     </tr>

@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import SingleStatistics from './SingleStatistics';
 import './Statistics.css'
 
-export default function Statistics({ setOpenStatistics, isPortfolio }) {
-    const uid = localStorage.getItem('userid');
-    const { id } = useParams();
+export default function Statistics({ setOpenStatistics, isPortfolio, id, uid }) {
+    // const uid = localStorage.getItem('userid');
+    // const { id } = useParams().id;
     const [stocks, setStocks] = useState([]);
     const [length, setLength] = useState(0);
     const [covMatrix, setCovMatrix] = useState([]);
@@ -127,7 +127,7 @@ export default function Statistics({ setOpenStatistics, isPortfolio }) {
                 </thead>
                 <tbody>
                     {stocks.map((stock, index) => (
-                        <SingleStatistics key={index} stock_symbol={stock.stock_symbol} />
+                        <SingleStatistics key={index} stock_symbol={isPortfolio ? stock.stock_symbol : stock.symbol} />
                     ))}
                 </tbody>
             </table>
@@ -137,14 +137,14 @@ export default function Statistics({ setOpenStatistics, isPortfolio }) {
                     <tr>
                         <th scope="col">Stock Symbol</th>
                         {stocks.map((stock, index) => (
-                            <th key={index} scope="col">{stock.stock_symbol}</th>
+                            <th key={index} scope="col">{isPortfolio ? stock.stock_symbol : stock.symbol}</th>
                         ))}
                     </tr>
                 </thead>
                 <tbody>
                     {stocks.map((stock, index) => (
                         <tr key={index}>
-                            <td>{stock.stock_symbol}</td>
+                            <td>{isPortfolio ? stock.stock_symbol : stock.symbol}</td>
                             {covMatrix[index]?.map((cov, i) => (
                                 <td key={i}>{cov}</td>
                             ))}
@@ -158,14 +158,14 @@ export default function Statistics({ setOpenStatistics, isPortfolio }) {
                     <tr>
                         <th scope="col">Stock Symbol</th>
                         {stocks.map((stock, index) => (
-                            <th key={index} scope="col">{stock.stock_symbol}</th>
+                            <th key={index} scope="col">{isPortfolio ? stock.stock_symbol : stock.symbol}</th>
                         ))}
                     </tr>
                 </thead>
                 <tbody>
                     {stocks.map((stock, index) => (
                         <tr key={index}>
-                            <td>{stock.stock_symbol}</td>
+                            <td>{isPortfolio ? stock.stock_symbol : stock.symbol}</td>
                             {corrMatrix[index]?.map((cov, i) => (
                                 <td key={i}>{cov}</td>
                             ))}
