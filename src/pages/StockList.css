@@ -35,3 +35,17 @@
 .editButton:hover {
   background-color: #007233;
 }
+
+.filter-button {
+  background-color: #1E5945;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px; 
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.filter-button:focus {
+  background-color: #04a7aa;
+}

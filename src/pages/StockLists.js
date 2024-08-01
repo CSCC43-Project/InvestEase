@@ -85,11 +85,11 @@ export default function StockLists(){
                 <button className='portfolio-add-button' onClick={() => addStockList()}>Add Stock List</button>
             </div>
             <div className='filter'>
-                <h3>Filter Stock Lists</h3>
-                <button onClick={() => setFilter('all')}>All</button>
-                <button onClick={() => setFilter('public')}>Public</button>
-                <button onClick={() => setFilter('shared')}>Shared</button>
-                <button onClick={() => setFilter('private')}>Private</button>
+                <h3>Filter Stock Lists: </h3>
+                <button className='filter-button' onClick={() => setFilter('all')}>All</button>
+                <button className='filter-button' onClick={() => setFilter('public')}>Public</button>
+                <button className='filter-button' onClick={() => setFilter('shared')}>Shared</button>
+                <button className='filter-button' onClick={() => setFilter('private')}>Private</button>
             </div>
             <div className="container">
                 {stockLists.map((stocklist) => (

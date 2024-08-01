@@ -52,9 +52,9 @@ export default function AnotherProfile() {
                     <h1 className='another-user-left-title'>Stock Lists</h1>
                     <div className='filter'>
                         <h3>Filter Lists</h3>
-                        <button onClick={() => setFilter('both')}>All</button>
-                        <button onClick={() => setFilter('public')}>Public</button>
-                        <button onClick={() => setFilter('shared')}>Shared</button>
+                        <button className='filter-button' onClick={() => setFilter('both')}>All</button>
+                        <button className='filter-button' onClick={() => setFilter('public')}>Public</button>
+                        <button className='filter-button' onClick={() => setFilter('shared')}>Shared</button>
                     </div>
                 </div>
                 <StockList filter={filter}/>
