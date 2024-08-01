@@ -417,6 +417,46 @@ app.get('/stocklists/:uid/:ownerid', async (req, res) => {
     }
 });
 
+app.get('/publicstocklists/:ownerid', async (req, res) => {
+    try {
+        const { ownerid } = req.params;
+        const stockLists = await pool.query('SELECT stocklistid FROM stock_list WHERE ownerid = $1 AND is_public = true', [ownerid]);
+        res.json(stockLists.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get('/sharedstocklists/:uid/:ownerid/', async (req, res) => {
+    try {
+        const { ownerid, uid } = req.params;
+        const stockLists = await pool.query('SELECT stocklistid FROM shared_stock_list WHERE ownerid = $1 AND shared_userid = $2', [ownerid, uid]);
+        res.json(stockLists.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get('/ownersharedstocklists/:uid', async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const stockLists = await pool.query('SELECT DISTINCT stocklistid FROM shared_stock_list WHERE ownerid = $1', [uid]);
+        res.json(stockLists.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get('/privatestocklists/:uid', async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const stockLists = await pool.query('SELECT stocklistid FROM stock_list WHERE ownerid = $1 AND is_public = false EXCEPT SELECT stocklistid FROM shared_stock_list WHERE ownerid = $1', [uid]);
+        res.json(stockLists.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 // ? StockList: Get all stock_list from a specific user
 // SELECT * FROM stock_list WHERE ownerID = $1;
 app.get('/stocklists/:ownerid', async (req, res) => {

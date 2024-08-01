@@ -7,40 +7,59 @@ export default function StockLists(){
     let uid = localStorage.getItem('userid');
     const navigate = useNavigate();
     const [stockLists, setStockLists] = useState([]);
-    const [isPublic, setIsPublic] = useState(false);
-    const [isShared, setIsShared] = useState(false);
+    const [filter, setFilter] = useState('all');
 
     function handleClick(listId) {
         navigate(`/mystocklists/${listId}`)
     }
 
     useEffect(() => {
+        if (filter === 'all') {
         (async () => {
             try {
                 const response = await fetch(`http://localhost:5000/stocklists/${uid}`);
                 const jsonData = await response.json();
                 setStockLists(jsonData);
+                console.log("set all");
             } catch (err) {
                 console.error(err.message);
             }
         })();
-    }, []);
-
-    // need to get listid
-    // useEffect(() => {
-    //     ( async () => {
-    //         try {
-    //             const res = await fetch(`http://localhost:5000/listvisibility/${uid}/${listId}`);
-    //             const data = await res.json();
-    //             setIsPublic(data.is_public);
-    //             const res2 = await fetch(`http://localhost:5000/isshared/${uid}/${listId}`);
-    //             const jsonData2 = await res2.json();
-    //             setIsShared(jsonData2);
-    //         } catch (error) {
-    //             console.error(error.message)
-    //         }
-    //     })()
-    // })
+    } else if (filter === 'public') {
+        (async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/publicstocklists/${uid}`);
+                const jsonData = await response.json();
+                setStockLists(jsonData);
+                console.log("set public");
+            } catch (err) {
+                console.error(err.message);
+            }
+        })();
+    } else if (filter === 'shared') {
+        (async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/ownersharedstocklists/${uid}`);
+                const jsonData = await response.json();
+                setStockLists(jsonData);
+                console.log("set shared");
+            } catch (err) {
+                console.error(err.message);
+            }
+        })();
+    } else {
+        (async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/privatestocklists/${uid}`);
+                const jsonData = await response.json();
+                setStockLists(jsonData);
+                console.log("set private");
+            } catch (err) {
+                console.error(err.message);
+            }
+        })();
+    }
+    }, [filter]);
 
     async function addStockList() {
         try {
@@ -64,6 +83,13 @@ export default function StockLists(){
             <div className="portfolio-info"> 
                 <h1 className="stock-list-title">Stock Lists</h1>
                 <button className='portfolio-add-button' onClick={() => addStockList()}>Add Stock List</button>
+            </div>
+            <div className='filter'>
+                <h3>Filter Stock Lists</h3>
+                <button onClick={() => setFilter('all')}>All</button>
+                <button onClick={() => setFilter('public')}>Public</button>
+                <button onClick={() => setFilter('shared')}>Shared</button>
+                <button onClick={() => setFilter('private')}>Private</button>
             </div>
             <div className="container">
                 {stockLists.map((stocklist) => (

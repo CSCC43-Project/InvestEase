@@ -88,3 +88,10 @@ body {
 .another-user-left-title {
     margin-left: 50px;
 }
+
+.filter{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}

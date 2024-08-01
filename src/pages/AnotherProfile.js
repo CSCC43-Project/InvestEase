@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 export default function AnotherProfile() {
     const [userInfo, setUserInfo] = useState([]);
     const [friendCount, setFriendCount] = useState(0);
+    const [filter, setFilter] = useState('both');
     let id = useParams().id;
     // get user info from id
     useEffect(() => {
@@ -49,9 +50,14 @@ export default function AnotherProfile() {
             <div>
                 <div className="another-user-container">
                     <h1 className='another-user-left-title'>Stock Lists</h1>
-                    <button className='portfolio-stat'> View Portfolio Statistics </button>
+                    <div className='filter'>
+                        <h3>Filter Lists</h3>
+                        <button onClick={() => setFilter('both')}>All</button>
+                        <button onClick={() => setFilter('public')}>Public</button>
+                        <button onClick={() => setFilter('shared')}>Shared</button>
+                    </div>
                 </div>
-                <StockList />
+                <StockList filter={filter}/>
             </div>
             
         </div>
