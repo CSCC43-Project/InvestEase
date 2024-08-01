@@ -18,3 +18,31 @@
     color: black;
     padding-left: 1rem;
 }
+
+.list-side-container {
+    display: flex;
+}
+
+.category-public {
+    background-color: green;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-right: 20px;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 1px;
+}
+
+.category-shared {
+    background-color: #8b4a4a;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-right: 20px;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 1px;
+}
