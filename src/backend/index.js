@@ -125,7 +125,7 @@ app.post('/checkLogin', async (req, res) => {
     app.get('/friendslist/outgoing/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const friendRequests = await pool.query('SELECT * FROM friend_request WHERE senderID = $1', [id]);
+            const friendRequests = await pool.query("SELECT * FROM friend_request WHERE senderID = $1 AND request_status = 'ipr';", [id]);
             res.json(friendRequests.rows);
         } catch (error) {
             console.error(error.message);
@@ -522,6 +522,7 @@ app.delete('/stocklists/:ownerid/:stocklistid', async (req, res) => {
     try {
         const { ownerid, stocklistid } = req.params;
         const deleteStockList = await pool.query('DELETE FROM stock_list WHERE ownerid = $1 AND stocklistid = $2', [ownerid, stocklistid]);
+        const deleteShared = await pool.query('DELETE FROM shared_stock_list WHERE ownerid = $1 AND stocklistid = $2', [ownerid, stocklistid]);
         res.json(deleteStockList.rows);
     } catch (error) {
         console.error(error.message);
@@ -694,7 +695,7 @@ app.delete("/allreviews/:ownerid/:stocklistid", async (req, res) => {
 app.get("/myreview/:ownerid/:listid/:myid", async (req, res) => {
     try{
         const { ownerid, listid, myid } = req.params;
-        const getReview = await pool.query('SELECT * FROM review WHERE ownerid = $1 AND stocklistid = $2 AND reviewerid = $3', [ownerid, listid, myid]);
+        const getReview = await pool.query('select reviewerid, stocklistid, ownerid, review_text, username, profilepic_url from review join users on review.reviewerid = users.userid WHERE review.stocklistid = $2 and review.ownerid = $1 and review.reviewerid = $3;', [ownerid, listid, myid]);
         res.json(getReview.rows);
     } catch (error) {
         console.error(error.message);
