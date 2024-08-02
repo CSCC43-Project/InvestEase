@@ -302,7 +302,9 @@ app.post('/checkLogin', async (req, res) => {
         try {
             const { portfolioid, userid } = req.params;
             const { num_shares, stock_symbol, timestamp } = req.body;
-            const updateCashAccount = await pool.query('UPDATE stock_holding SET num_shares = $1 WHERE userid = $2 AND portfolioid = $3 AND stock_symbol = $4 AND timestamp = $5 RETURNING *', [num_shares, userid, portfolioid, stock_symbol, timestamp]);
+            const updateCashAccount = await pool.query(
+                'UPDATE stock_holding SET num_shares = $1 WHERE userid = $2 AND portfolioid = $3 AND stock_symbol = $4 AND timestamp = $5 RETURNING *'
+                , [num_shares, userid, portfolioid, stock_symbol, timestamp]);
             res.json(updateCashAccount.rows);
         } catch (error) {
             console.error(error.message);
@@ -314,7 +316,9 @@ app.post('/checkLogin', async (req, res) => {
         try {
             const { portfolioid, userid } = req.params;
             const { stock_symbol, timestamp, num_shares } = req.body;
-            const newStockHolding = await pool.query('INSERT INTO stock_holding (portfolioid, userid, stock_symbol, timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *', [portfolioid, userid, stock_symbol, timestamp, num_shares]);
+            const newStockHolding = await pool.query(
+                'INSERT INTO stock_holding (portfolioid, userid, stock_symbol, timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *'
+                , [portfolioid, userid, stock_symbol, timestamp, num_shares]);
             res.json(newStockHolding.rows[0]);
         } catch (error) {
             console.error(error.message);
@@ -339,7 +343,9 @@ app.get("/transactions/:portfolioid/:userid", async (req, res) => {
 app.post("/transactions", async (req, res) => {
     try {
         const { portfolioid, userid, stock_symbol, timestamp, total_cost, num_shares } = req.body;
-        const newTransaction = await pool.query("INSERT INTO transaction (portfolioid, userid, stock_symbol, timestamp, time_of_purchase, total_cost, num_shares_purchased) VALUES ($1, $2, $3, $4, now(), $5, $6) RETURNING *", [portfolioid, userid, stock_symbol, timestamp, total_cost, num_shares]);
+        const newTransaction = await pool.query(
+            "INSERT INTO transaction (portfolioid, userid, stock_symbol, timestamp, time_of_purchase, total_cost, num_shares_purchased) VALUES ($1, $2, $3, $4, now(), $5, $6) RETURNING *"
+            , [portfolioid, userid, stock_symbol, timestamp, total_cost, num_shares]);
         res.json(newTransaction.rows[0]);
     } catch (error) {
         console.error(error.message);
@@ -382,7 +388,11 @@ app.get('/lateststocks/:symbol', async (req, res) => {
 app.get('/marketinfo/:portfolioid/:userid', async (req, res) => {
     try {
         const { portfolioid, userid } = req.params;
-        const marketInfo = await pool.query('select portfolioid, userid, stock_symbol, stocks.timestamp, num_shares, close from stock_holding join stocks on stock_holding.stock_symbol = stocks.symbol WHERE (stocks.timestamp, close) = (SELECT timestamp, close FROM stocks WHERE symbol = stock_holding.stock_symbol ORDER BY timestamp DESC LIMIT 1) AND portfolioid = $1 AND userid = $2', [portfolioid, userid]);
+        const marketInfo = await pool.query(
+            'select portfolioid, userid, stock_symbol, stocks.timestamp, num_shares, close from stock_holding join stocks on \
+            stock_holding.stock_symbol = stocks.symbol WHERE (stocks.timestamp, close) = (SELECT timestamp, close FROM stocks WHERE \
+            symbol = stock_holding.stock_symbol ORDER BY timestamp DESC LIMIT 1) AND portfolioid = $1 AND userid = $2'
+            , [portfolioid, userid]);
         res.json(marketInfo.rows);
     } catch (error) {
         console.error(error.message);
@@ -394,7 +404,9 @@ app.get('/marketinfo/:portfolioid/:userid', async (req, res) => {
 app.post('/addstocks', async (req, res) => {
     try {
         const { symbol, open, high, low, close, volume } = req.body;
-        const newStock = await pool.query('INSERT INTO stocks (symbol, timestamp, open, high, low, close, volume) VALUES ($1, NOW(), $2, $3, $4, $5, $6) RETURNING *', [symbol, open, high, low, close, volume]);
+        const newStock = await pool.query(
+            'INSERT INTO stocks (symbol, timestamp, open, high, low, close, volume) VALUES ($1, NOW(), $2, $3, $4, $5, $6) RETURNING *'
+            , [symbol, open, high, low, close, volume]);
         res.json(newStock.rows[0]);
     } catch (error) {
         console.error(error.message);
@@ -407,7 +419,9 @@ app.post('/addstocks', async (req, res) => {
 app.get('/stocklists/:uid/:ownerid', async (req, res) => {
     try {
         const { uid, ownerid } = req.params;
-        const stockLists = await pool.query('SELECT stocklistid FROM stock_list WHERE ownerid = $2 AND is_public = true UNION SELECT stocklistid from shared_stock_list WHERE shared_userid = $1 AND ownerid = $2', [uid, ownerid]);
+        const stockLists = await pool.query(
+            'SELECT stocklistid FROM stock_list WHERE ownerid = $2 AND is_public = true UNION SELECT stocklistid from shared_stock_list WHERE shared_userid = $1 AND ownerid = $2'
+            , [uid, ownerid]);
         res.json(stockLists.rows);
     } catch (error) {
         console.error(error.message);
@@ -460,7 +474,10 @@ app.get('/ownersharedstocklists/:uid', async (req, res) => {
 app.get('/privatestocklists/:uid', async (req, res) => {
     try {
         const { uid } = req.params;
-        const stockLists = await pool.query('SELECT stocklistid FROM stock_list WHERE ownerid = $1 AND is_public = false EXCEPT SELECT stocklistid FROM shared_stock_list WHERE ownerid = $1', [uid]);
+        const stockLists = await pool.query(
+            'SELECT stocklistid FROM stock_list WHERE ownerid = $1 AND is_public = false EXCEPT SELECT stocklistid FROM \
+            shared_stock_list WHERE ownerid = $1'
+            , [uid]);
         res.json(stockLists.rows);
     } catch (error) {
         console.error(error.message);
@@ -493,7 +510,9 @@ app.put('/stocklists/updatevisibility/:userid/:stocklistid', async (req, res) =>
     try {
         const { userid, stocklistid } = req.params;
         const { is_public } = req.body;
-        const updateStockList = await pool.query('UPDATE stock_list SET is_public = $1 WHERE stocklistid = $2 AND ownerid = $3 RETURNING *', [is_public, stocklistid, userid]);
+        const updateStockList = await pool.query(
+            'UPDATE stock_list SET is_public = $1 WHERE stocklistid = $2 AND ownerid = $3 RETURNING *'
+            , [is_public, stocklistid, userid]);
         res.json(updateStockList.rows);
     } catch (error) {
         console.error(error.message);
@@ -512,7 +531,9 @@ app.post('/stocklists/:ownerid', async (req, res) => {
     try {
         const { ownerid } = req.params;
         const { stocklistid } = req.body;
-        const newStockList = await pool.query('INSERT INTO stock_list (ownerid, stocklistid, is_public) VALUES ($1, $2, FALSE) RETURNING *', [ownerid, stocklistid]);
+        const newStockList = await pool.query(
+            'INSERT INTO stock_list (ownerid, stocklistid, is_public) VALUES ($1, $2, FALSE) RETURNING *'
+            , [ownerid, stocklistid]);
         res.json(newStockList.rows[0]);
     } catch (error) {
         console.error(error.message);
@@ -534,7 +555,9 @@ app.post('/addstocklist/:listid/:userid', async (req, res) => {
     try {
         const { listid, userid } = req.params;
         const { stock_symbol, timestamp, num_shares } = req.body;
-        const newStockListItem = await pool.query('INSERT INTO stock_list_item (stocklistid, ownerid, symbol, timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *', [listid, userid, stock_symbol, timestamp, num_shares]);
+        const newStockListItem = await pool.query(
+            'INSERT INTO stock_list_item (stocklistid, ownerid, symbol, timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *'
+            , [listid, userid, stock_symbol, timestamp, num_shares]);
         res.json(newStockListItem.rows[0]);
     } catch (error) { 
         console.error(error.message);
@@ -544,7 +567,9 @@ app.post('/addstocklist/:listid/:userid', async (req, res) => {
 app.delete('/deletestock/:uid/:listId/:symbol', async (req,res) => {
     try {
         const { uid, listId, symbol } = req.params;
-        const deleteStock = await pool.query('DELETE FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2 AND symbol = $3 RETURNING *;', [uid, listId, symbol]);
+        const deleteStock = await pool.query(
+            'DELETE FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2 AND symbol = $3 RETURNING *;'
+            , [uid, listId, symbol]);
         res.json(deleteStock.rows[0]);
     } catch (error) {
         console.error(error.message);
@@ -554,8 +579,12 @@ app.delete('/deletestock/:uid/:listId/:symbol', async (req,res) => {
 app.put('/addshare/:uid/:listId/:symbol', async (req, res) => {
     try {
         const { uid, listId, symbol } = req.params;
-        const addShare = await pool.query('UPDATE stock_list_item SET num_shares = num_shares + 1 WHERE ownerid = $1 AND stocklistid = $2 AND symbol = $3', [uid, listId, symbol]);
-        const stockLists = await pool.query('SELECT * FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2;', [uid, listId]);
+        const addShare = await pool.query(
+            'UPDATE stock_list_item SET num_shares = num_shares + 1 WHERE ownerid = $1 AND stocklistid = $2 AND symbol = $3'
+            , [uid, listId, symbol]);
+        const stockLists = await pool.query(
+            'SELECT * FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2;'
+            , [uid, listId]);
         res.json(stockLists.rows);
     } catch (error) {
         console.error(error.message);
@@ -565,11 +594,15 @@ app.put('/addshare/:uid/:listId/:symbol', async (req, res) => {
 app.put('/subshare/:uid/:listId/:symbol', async (req, res) => {
     try {
         const { uid, listId, symbol } = req.params;
-        const getShares = await pool.query('SELECT num_shares FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2 AND symbol = $3', [uid, listId, symbol]);
+        const getShares = await pool.query(
+            'SELECT num_shares FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2 AND symbol = $3'
+            , [uid, listId, symbol]);
         if(getShares.rows[0].num_shares == 0){
             res.status(400).json({response: "No stock left"});
         } else {
-            const subShare = await pool.query('UPDATE stock_list_item SET num_shares = num_shares - 1 WHERE ownerid = $1 AND stocklistid = $2 AND symbol = $3', [uid, listId, symbol]);
+            const subShare = await pool.query(
+                'UPDATE stock_list_item SET num_shares = num_shares - 1 WHERE ownerid = $1 AND stocklistid = $2 AND symbol = $3'
+                , [uid, listId, symbol]);
             const stockLists = await pool.query('SELECT * FROM stock_list_item WHERE ownerid = $1 AND stocklistid = $2;', [uid, listId]);
             res.json(stockLists.rows);
         }
@@ -620,7 +653,10 @@ app.post("stocklistitem/:stocklistid/:ownerid", async (req, res) => {
 app.get('/sharedstocklist/:stocklistid/:ownerid', async (req, res) => {
     try {
         const { stocklistid, ownerid } = req.params;
-        const sharedStockList = await pool.query("SELECT * FROM users WHERE userid = (SELECT friendid FROM friends_list WHERE ownerid = $2 AND status = 'mut' EXCEPT SELECT shared_userid FROM shared_stock_list WHERE stocklistid = $1 AND ownerid = $2)", [stocklistid, ownerid]);
+        const sharedStockList = await pool.query(
+            "SELECT * FROM users WHERE userid = (SELECT friendid FROM friends_list WHERE ownerid = $2 AND status = 'mut' \
+            EXCEPT SELECT shared_userid FROM shared_stock_list WHERE stocklistid = $1 AND ownerid = $2)"
+            , [stocklistid, ownerid]);
         res.json(sharedStockList.rows);
     } catch (error) {
         console.error(error.message);

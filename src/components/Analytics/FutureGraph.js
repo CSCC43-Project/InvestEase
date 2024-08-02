@@ -41,7 +41,7 @@ export default function Graph({ pastData, forecastPeriod }) {
 
             // Predict future values
             const futureDays = futureTimestamps.map(ts => (ts - timestamps[0]) / (24 * 60 * 60 * 1000));
-            const futurePrices = futureDays.map(day => regression.predict(day));
+            const futurePrices = futureDays.map(day => Math.max(regression.predict(day), 0));
 
             futurePredictions = futureTimestamps.map((timestamp, index) => ({
                 timestamp: new Date(timestamp).toISOString(),
@@ -61,7 +61,7 @@ export default function Graph({ pastData, forecastPeriod }) {
 
             // Predict future values
             const futureDays = futureTimestamps.map(ts => (ts - timestamps[0]) / (24 * 60 * 60 * 1000));
-            const futurePrices = futureDays.map(day => regressionModel.predict(day));
+            const futurePrices = futureDays.map(day => Math.max(regressionModel.predict(day), 0));
 
             futurePredictions = futureTimestamps.map((timestamp, index) => ({
                 timestamp: new Date(timestamp).toISOString(),
