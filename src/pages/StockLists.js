@@ -91,6 +91,18 @@ export default function StockLists(){
                 <button className='filter-button' onClick={() => setFilter('shared')}>Shared</button>
                 <button className='filter-button' onClick={() => setFilter('private')}>Private</button>
             </div>
+            { stockLists.length === 0 && filter === 'all' && (
+                <h1 className='empty-text'>There are no stock lists.</h1>
+            )}
+            { stockLists.length === 0 && filter === 'shared' && (
+                <h1 className='empty-text'>There are no shared stock lists.</h1>
+            )}
+            { stockLists.length === 0 && filter === 'public' && (
+                <h1 className='empty-text'>There are no public stock lists.</h1>
+            )}
+            { stockLists.length === 0 && filter === 'private' && (
+                <h1 className='empty-text'>There are no private stock lists.</h1>
+            )}
             <div className="container">
                 {stockLists.map((stocklist) => (
                     <div className="stockList">
