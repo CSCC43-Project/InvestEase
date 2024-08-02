@@ -28,24 +28,36 @@ export default function Statistics({ setOpenStatistics, isPortfolio, id, uid }) 
     }, [id, uid, isPortfolio]);
 
     async function getCovariance(symbol1, symbol2) {
-        try {
-            const response = await fetch(`http://localhost:5000/cov/${symbol1}/${symbol2}`);
-            const jsonData = await response.json();
-            return jsonData;
-        } catch (err) {
-            console.error(err.message);
-            return null;
+        const cachedData = sessionStorage.getItem(`cov-${symbol1}-${symbol2}`);
+        if (cachedData) {
+            return JSON.parse(cachedData);
+        } else {
+            try {
+                const response = await fetch(`http://localhost:5000/cov/${symbol1}/${symbol2}`);
+                const jsonData = await response.json();
+                sessionStorage.setItem(`cov-${symbol1}-${symbol2}`, JSON.stringify(jsonData));
+                return jsonData;
+            } catch (err) {
+                console.error(err.message);
+                return null;
+            }
         }
     }
 
     async function getCorrelation(symbol1, symbol2) {
-        try {
-            const response = await fetch(`http://localhost:5000/corr/${symbol1}/${symbol2}`);
-            const jsonData = await response.json();
-            return jsonData;
-        } catch (err) {
-            console.error(err.message);
-            return null;
+        const cachedData = sessionStorage.getItem(`corr-${symbol1}-${symbol2}`);
+        if (cachedData) {
+            return JSON.parse(cachedData);
+        } else {
+            try {
+                const response = await fetch(`http://localhost:5000/corr/${symbol1}/${symbol2}`);
+                const jsonData = await response.json();
+                sessionStorage.setItem(`corr-${symbol1}-${symbol2}`, JSON.stringify(jsonData));
+                return jsonData;
+            } catch (err) {
+                console.error(err.message);
+                return null;
+            }
         }
     }
 
@@ -71,9 +83,13 @@ export default function Statistics({ setOpenStatistics, isPortfolio, id, uid }) 
 
             await Promise.all(promises);
             setCovMatrix(matrix);
+            sessionStorage.setItem(`covMatrix-${isPortfolio}-${uid}-${id}`, JSON.stringify(matrix));
         };
 
-        if (stocks.length > 0) {
+        const cachedCovMatrix = sessionStorage.getItem(`covMatrix-${isPortfolio}-${uid}-${id}`);
+        if (cachedCovMatrix) {
+            setCovMatrix(JSON.parse(cachedCovMatrix));
+        } else if (stocks.length > 0) {
             calculateCovarianceMatrix();
         }
     }, [stocks, length]);
@@ -104,9 +120,13 @@ export default function Statistics({ setOpenStatistics, isPortfolio, id, uid }) 
 
             await Promise.all(promises);
             setCorrMatrix(matrix);
+            sessionStorage.setItem(`corrMatrix-${isPortfolio}-${uid}-${id}`, JSON.stringify(matrix));
         };
 
-        if (stocks.length > 0) {
+        const cachedCorrMatrix = sessionStorage.getItem(`corrMatrix-${isPortfolio}-${uid}-${id}`);
+        if (cachedCorrMatrix) {
+            setCorrMatrix(JSON.parse(cachedCorrMatrix));
+        } else if (stocks.length > 0) {
             calculateCorrelationMatrix();
         }
     }, [stocks, length]);
