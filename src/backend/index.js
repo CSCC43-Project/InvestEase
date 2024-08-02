@@ -81,17 +81,6 @@ app.post('/checkLogin', async (req, res) => {
             console.error(error.message);
         }
     });
-    // * Get Profile Pic
-    // SELECT profile_pic FROM users WHERE userid = $1;
-    app.get('/profilepic/:id', async (req, res) => {
-        try {
-            const { id } = req.params;
-            const profilePic = await pool.query('SELECT profilepic_url FROM users WHERE userid = $1', [id]);
-            res.json(profilePic.rows[0]);
-        } catch (error) {
-            console.error(error.message);
-        }
-    });
     // * Get Friend Count
     // SELECT COUNT(*) FROM friends_list WHERE ownerID = $1 GROUP BY ownerID;
     app.get('/friendcount/:id', async (req, res) => {
@@ -239,6 +228,8 @@ app.post('/checkLogin', async (req, res) => {
             console.error(error.message);
         }
     });
+    // ? Portfolio: Get all portfolios except the current one
+    // SELECT * FROM portfolios WHERE userid = $1 AND portfolio_id != $2;
     app.get("/getportfolios/:uid/:portfolioid", async (req, res) => {
         try {
             const { uid, portfolioid } = req.params;
@@ -248,6 +239,8 @@ app.post('/checkLogin', async (req, res) => {
             console.error(error.message);
         }
     });
+    // ? Portfolio: Get the number of portfolios for a user
+    // SELECT COUNT(*) FROM portfolios WHERE userid = $1;
     app.get("/portfoliocount/:id", async (req, res) => {
         try {
             const { id } = req.params;
@@ -314,14 +307,8 @@ app.post('/checkLogin', async (req, res) => {
             console.error(error.message);
         }
     });
-    // ? StockHolding: Get all Stock Holdings
-    // SELECT * FROM stock_holding WHERE portfolio_id = $1 AND userid = $2;
-    // ? StockHolding: Get specific Stock Holding
-    // SELECT * FROM stock_holding WHERE portfolio_id = $1 AND userid = $2 AND stock_symbol = $3 AND timestamp = $4;
-    // SELECT close from stocks WHERE symbol = $1 AND timestamp = $2;
     // ? StockHolding: Add stock to portfolio
     // INSERT INTO stock_holding (portfolio_id, userid, stock_symbol, timestamp, time_of_purchase, num_shares) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
-    // INSERT INTO transaction (portfolioid, userid, stock_symbol, timestamp, time_of_purchase, total_cost, num_shares_purchased) VALUES ($1, $2, $3, $4, now(), $5, $6) RETURNING *;
     app.post('/stockholding/:portfolioid/:userid', async (req, res) => {
         try {
             const { portfolioid, userid } = req.params;
@@ -335,6 +322,7 @@ app.post('/checkLogin', async (req, res) => {
 
 // ! Transactions
 // ? Transaction: Get all transactions
+// SELECT * FROM transaction WHERE portfolio_id = $1 AND userid = $2;
 app.get("/transactions/:portfolioid/:userid", async (req, res) => {
     try {
         const { portfolioid, userid } = req.params;
@@ -346,6 +334,7 @@ app.get("/transactions/:portfolioid/:userid", async (req, res) => {
 });
 
 // ? Transaction: Post a transaction
+// INSERT INTO transaction (portfolio_id, userid, stock_symbol, timestamp, time_of_purchase, total_cost, num_shares_purchased) VALUES ($1, $2, $3, $4, now(), $5, $6) RETURNING *;
 app.post("/transactions", async (req, res) => {
     try {
         const { portfolioid, userid, stock_symbol, timestamp, total_cost, num_shares } = req.body;
@@ -388,7 +377,7 @@ app.get('/lateststocks/:symbol', async (req, res) => {
         console.error(error.message);
     }
 });
-
+// ? Get the latest stock price for a specific stock
 app.get('/marketinfo/:portfolioid/:userid', async (req, res) => {
     try {
         const { portfolioid, userid } = req.params;
@@ -410,8 +399,6 @@ app.post('/addstocks', async (req, res) => {
         console.error(error.message);
     }
 });
-    // ? View statistics of a specifc stock
-    // SELECT close FROM stocks WHERE symbol = $1;
 
 // ! STOCKLIST PAGE
 // * User Page: get all stock lists from a user that are public union all stock lists from a specific user that are shared with the logged in user
@@ -426,6 +413,8 @@ app.get('/stocklists/:uid/:ownerid', async (req, res) => {
     }
 });
 
+// ? Stock: Update the volume of a stock
+// UPDATE stocks SET volume = volume + $2 WHERE symbol = $1 RETURNING *;
 app.put(`/updatevolume/:symbol`, async (req, res) => {
     try {
         const { symbol } = req.params;
@@ -627,7 +616,7 @@ app.post("stocklistitem/:stocklistid/:ownerid", async (req, res) => {
 app.get('/sharedstocklist/:stocklistid/:ownerid', async (req, res) => {
     try {
         const { stocklistid, ownerid } = req.params;
-        const sharedStockList = await pool.query("SELECT friendid FROM friends_list WHERE ownerid = $2 AND status = 'mut' EXCEPT SELECT shared_userid FROM shared_stock_list WHERE stocklistid = $1 AND ownerid = $2", [stocklistid, ownerid]);
+        const sharedStockList = await pool.query("SELECT * FROM users WHERE userid = (SELECT friendid FROM friends_list WHERE ownerid = $2 AND status = 'mut' EXCEPT SELECT shared_userid FROM shared_stock_list WHERE stocklistid = $1 AND ownerid = $2)", [stocklistid, ownerid]);
         res.json(sharedStockList.rows);
     } catch (error) {
         console.error(error.message);
@@ -645,29 +634,8 @@ app.post("/sharedstocklist/:stocklistid/:ownerid", async (req, res) => {
     }
 });
 
-app.get('/isshared/:stocklistid/:ownerid', async (req, res) => {
-    try {
-        const { stocklistid, ownerid } = req.params;
-        const sharedStockList = await pool.query("SELECT COUNT(*) FROM shared_stock_list WHERE ownerid = $2 AND stocklistid = $1", [stocklistid, ownerid]);
-        res.json(sharedStockList.rows[0].count > 0);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
 // ! REVIEW PAGE
-app.get('/ownerreviews/:ownerid/:stockListId', async (req, res) => {
-    try {
-        const { ownerid, stockListId } = req.params;
-        const reviews = await pool.query(
-            'SELECT users.username, review.review_text FROM review JOIN users ON review.reviewerid = users.userid WHERE review.ownerid = $1 AND review.stocklistid = $2;'
-            , [ownerid, stockListId]);
-        res.json(reviews.rows);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
+// ? Review: Get all reviews for a specific stocklist
 app.get('/reviews/:ownerid/:stocklistid', async (req, res) => {
     try {
         const { ownerid, stocklistid } = req.params;
@@ -678,6 +646,7 @@ app.get('/reviews/:ownerid/:stocklistid', async (req, res) => {
     }
 });
 
+// ? Review: Add a review
 app.post('/addreview', async (req, res) => {
     try {
         const { reviewerid, stocklistid, ownerid, review_text} = req.body;
@@ -688,6 +657,7 @@ app.post('/addreview', async (req, res) => {
     }
 });
 
+// ? Review: Update a review
 app.put("/updateReview", async (req, res) => {
     try {
         const { reviewerid, stocklistid, ownerid, review_text } = req.body;
@@ -698,6 +668,7 @@ app.put("/updateReview", async (req, res) => {
     }
 });
 
+// ? Review: Delete a specific review
 app.delete('/reviews/:ownerid/:stocklistid/:reviewerid', async (req, res) => {
     try {
         const { ownerid, stocklistid, reviewerid } = req.params;
@@ -708,6 +679,7 @@ app.delete('/reviews/:ownerid/:stocklistid/:reviewerid', async (req, res) => {
     }
 });
 
+// ? Review: Delete all reviews for a specific stocklist
 app.delete("/allreviews/:ownerid/:stocklistid", async (req, res) => {
     try{
         const { ownerid, stocklistid } = req.params;
@@ -718,6 +690,7 @@ app.delete("/allreviews/:ownerid/:stocklistid", async (req, res) => {
     }
 });
 
+// ? Review: Get a specific review
 app.get("/myreview/:ownerid/:listid/:myid", async (req, res) => {
     try{
         const { ownerid, listid, myid } = req.params;
@@ -729,15 +702,6 @@ app.get("/myreview/:ownerid/:listid/:myid", async (req, res) => {
 });
 
 // ! USERS
-// ? Get all users
-app.get('/users', async (req, res) => {
-    try {
-        const allUsers = await pool.query('SELECT * FROM users');
-        res.json(allUsers.rows);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
 // ? User: Get user info by ID
     // SELECT * FROM users WHERE userid = $1;
     app.get('/users/:id', async (req, res) => {
@@ -761,12 +725,34 @@ app.get('/users', async (req, res) => {
         }
     });
 
+// ? User: Get user info by username except the user's friends
+    app.get('/searchFriends/:username/:id', async (req, res) => {
+        try {
+            const { username, id } = req.params;
+            const user = await pool.query('SELECT * FROM users WHERE userid = (SELECT userid FROM users WHERE username = $1 EXCEPT SELECT friendid FROM friends_list where ownerid = $2)', [username, id]);
+            res.json(user.rows);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+
+// ? User: Get user info by username for only the user's friends
+    app.get('/searchShare/:username/:id', async (req, res) => {
+        try {
+            const { username, id } = req.params;
+            const user = await pool.query('SELECT * FROM users WHERE userid = (SELECT friendid FROM friends_list WHERE ownerid = $2 AND friendid = (SELECT userid FROM users WHERE username = $1))', [username, id]);
+            res.json(user.rows);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
+
 app.listen(5000, () => {
     console.log('Server is running on port 5000');
 });
 
 // ! GRAPHING
-
+// ? Graph for a specific stock for the last week
 app.get('/graphingWeek/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
@@ -777,7 +763,7 @@ app.get('/graphingWeek/:symbol', async (req, res) => {
         console.error(error.message);
     }
 });
-
+// ? Graph for a specific stock for the last month
 app.get('/graphingMonth/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
@@ -788,7 +774,7 @@ app.get('/graphingMonth/:symbol', async (req, res) => {
         console.error(error.message);
     }
 });
-
+// ? Graph for a specific stock for the last quarter
 app.get('/graphingQuarter/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
@@ -799,7 +785,7 @@ app.get('/graphingQuarter/:symbol', async (req, res) => {
         console.error(error.message);
     }
 });
-
+// ? Graph for a specific stock for the last year
 app.get('/graphingYear/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
@@ -810,7 +796,7 @@ app.get('/graphingYear/:symbol', async (req, res) => {
         console.error(error.message);
     }
 });
-
+// ? Graph for a specific stock for the last 5 years
 app.get('/graphing5Years/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
@@ -822,19 +808,8 @@ app.get('/graphing5Years/:symbol', async (req, res) => {
     }
 });
 
-// ! NEW STUFF
-// GET COEFFICIENT OF VARIATION FOR ALL STOCKS
-app.get('/statistics', async (req, res) => {
-    try {
-        const statistics = await pool.query("SELECT symbol,(STDDEV_POP(close) / AVG(close)) AS coefficient_of_variation FROM stocks \
-WHERE timestamp BETWEEN (SELECT timestamp FROM stocks WHERE symbol = symbol ORDER BY timestamp ASC LIMIT 1) AND now() GROUP BY symbol");
-        res.json(statistics.rows);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-// GET COEFFICIENT OF VARIATION FOR A SPECIFIC STOCK
+// ! Statistics
+// ? GET COEFFICIENT OF VARIATION FOR A SPECIFIC STOCK
 app.get('/statistics/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
@@ -846,7 +821,7 @@ WHERE (timestamp BETWEEN (SELECT timestamp FROM stocks WHERE symbol = symbol ORD
     }
 });
 
-// BETA COEFFICIENT
+// ? GET BETA COEFFICIENT
 app.get('/beta/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
@@ -858,44 +833,7 @@ app.get('/beta/:symbol', async (req, res) => {
     }
 });
 
-app.get('/marketValue', async (req, res) => {
-    try {
-        const marketValue = await pool.query("WITH stock_returns AS (SELECT timestamp, symbol, close, LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS prev_close,(close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) / LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS stock_return FROM stocks), stock_weights AS (SELECT timestamp, symbol, (close * volume) AS market_cap, SUM(close * volume) OVER (PARTITION BY timestamp) AS total_market_cap FROM stocks), weights AS (SELECT timestamp, symbol, market_cap / total_market_cap AS weight FROM stock_weights), market_returns AS (SELECT sr.timestamp, SUM(sr.stock_return * w.weight) AS market_return FROM stock_returns sr Join weights w ON sr.timestamp = w.timestamp AND sr.symbol = w.symbol GROUP BY sr.timestamp) SELECT timestamp, market_return FROM market_returns ORDER BY timestamp");
-        res.json(marketValue.rows);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-app.get('/dailyReturns/:symbol', async (req, res) => {
-    try {
-        const { symbol } = req.params;
-        const dailyreturns = await pool.query("SELECT timestamp, (close - LAG(close) OVER (ORDER BY timestamp)) / LAG(close) OVER (ORDER BY timestamp) AS stock_return FROM stocks WHERE symbol = $1", [symbol]);
-        res.json(dailyreturns.rows);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-app.get('/covariance/:symbol', async (req, res) => {
-    try {
-        const { symbol } = req.params;
-        const covariance = await pool.query("WITH returns AS (SELECT timestamp, symbol AS asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp))/ LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS asset_return FROM stocks WHERE symbol = $1 UNION ALL SELECT timestamp, 'MARKET' as asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) / LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS asset_return FROM stocks WHERE symbol IN (SELECT DISTINCT symbol FROM stocks)), mean_returns AS (SELECT asset_symbol, AVG(asset_return) AS mean_return FROM returns GROUP BY asset_symbol), returns_with_means AS (SELECT r.timestamp, r.asset_symbol, r.asset_return, m.mean_return AS mean_return FROM returns r JOIN mean_returns m ON r.asset_symbol = m.asset_symbol) SELECT SUM((r.asset_return - r.mean_return) * (m.asset_return - m.mean_return)) / (COUNT(*) - 1) AS covariance FROM returns_with_means r JOIN returns_with_means m ON r.timestamp = m.timestamp WHERE r.asset_symbol = $1 AND m.asset_symbol = 'MARKET'", [symbol])
-        res.json(covariance.rows[0].covariance);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-app.get('/variance', async (req, res) => {
-    try {
-        const variance = await pool.query("WITH market_returns AS (SELECT timestamp, symbol AS asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp))/ LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS return FROM stocks WHERE symbol IN (SELECT DISTINCT symbol FROM stocks)), mean_market_return AS (SELECT AVG(return) AS mean_return FROM market_returns) SELECT SUM((return - m.mean_return) * (return - m.mean_return)) / (COUNT(*) - 1) AS variance FROM market_returns r JOIN mean_market_return m ON true");
-        res.json(variance.rows);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
+// ? Get Covariance of two stocks
 app.get('/cov/:s1/:s2', async (req, res) => {
     try {
         const { s1, s2 } = req.params;
@@ -906,6 +844,7 @@ app.get('/cov/:s1/:s2', async (req, res) => {
     }
 });
 
+// ? Get Correlation of two stocks
 app.get('/corr/:s1/:s2', async (req, res) => {
     try {
         const { s1, s2 } = req.params;

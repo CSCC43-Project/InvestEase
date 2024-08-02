@@ -23,7 +23,7 @@ function SearchFriends({ search }) {
         const searchButton = document.querySelector('.searchButton');
         searchButton.addEventListener('click', async () => {
             try {
-                const response = await fetch(`http://localhost:5000/users/username/${searchBar.value}`);
+                const response = await fetch(`http://localhost:5000/searchFriends/${searchBar.value}/${uid}`);
                 const jsonData = await response.json();
                 setSearchResults(jsonData);
             } catch (err) {

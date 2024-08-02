@@ -3,8 +3,7 @@ import '../FriendList/Friend.css'
 import { useState, useEffect } from 'react';
 
 function ShareFriend({id}) {
-    //const uid = localStorage.getItem('userid');
-    const uid = 1;
+    const uid = localStorage.getItem('userid');
     const listid = useParams().id;
     const [friend, setFriend] = useState([]);
     const [friendCount, setFriendCount] = useState(0);

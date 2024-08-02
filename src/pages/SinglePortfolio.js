@@ -44,7 +44,7 @@ export default function SinglePortfolio() {
                 console.error(err.message);
             }
         })();
-    }, []);
+    }, [openDeposit]);
     useEffect(() => {
         (async () => {
             try {
