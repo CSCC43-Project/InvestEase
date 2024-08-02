@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-str */
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -605,7 +606,9 @@ app.post("stocklistitem/:stocklistid/:ownerid", async (req, res) => {
     try {
         const { stocklistid, ownerid } = req.params;
         const { stock_symbol, stock_timestamp, num_shares } = req.body;
-        const newStockListItem = await pool.query("INSERT INTO stock_list_item (stocklistid, ownerid, stock_symbol, stock_timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *", [stocklistid, ownerid, stock_symbol, stock_timestamp, num_shares]);
+        const newStockListItem = await pool.query(
+            "INSERT INTO stock_list_item (stocklistid, ownerid, stock_symbol, stock_timestamp, num_shares) VALUES ($1, $2, $3, $4, $5) RETURNING *"
+            , [stocklistid, ownerid, stock_symbol, stock_timestamp, num_shares]);
         res.json(newStockListItem.rows[0]);
     } catch (error) {
         console.error(error.message);
@@ -628,7 +631,9 @@ app.post("/sharedstocklist/:stocklistid/:ownerid", async (req, res) => {
     try {
         const { stocklistid, ownerid } = req.params;
         const { shared_userid } = req.body;
-        const newSharedStockList = await pool.query("INSERT INTO shared_stock_list (stocklistid, ownerid, shared_userid) VALUES ($1, $2, $3) RETURNING *", [stocklistid, ownerid, shared_userid]);
+        const newSharedStockList = await pool.query(
+            "INSERT INTO shared_stock_list (stocklistid, ownerid, shared_userid) VALUES ($1, $2, $3) RETURNING *"
+            , [stocklistid, ownerid, shared_userid]);
         res.json(newSharedStockList.rows[0]);
     } catch (error) {
         console.error(error.message);
@@ -640,7 +645,10 @@ app.post("/sharedstocklist/:stocklistid/:ownerid", async (req, res) => {
 app.get('/reviews/:ownerid/:stocklistid', async (req, res) => {
     try {
         const { ownerid, stocklistid } = req.params;
-        const reviews = await pool.query('select reviewerid, stocklistid, ownerid, review_text, username, profilepic_url from review join users on review.reviewerid = users.userid WHERE review.stocklistid = $2 and review.ownerid = $1;', [ownerid, stocklistid]);
+        const reviews = await pool.query(
+            'select reviewerid, stocklistid, ownerid, review_text, username, profilepic_url from review join users on \
+            review.reviewerid = users.userid WHERE review.stocklistid = $2 and review.ownerid = $1;'
+            , [ownerid, stocklistid]);
         res.json(reviews.rows);
     } catch (error) {
         console.error(error.message);
@@ -651,7 +659,9 @@ app.get('/reviews/:ownerid/:stocklistid', async (req, res) => {
 app.post('/addreview', async (req, res) => {
     try {
         const { reviewerid, stocklistid, ownerid, review_text} = req.body;
-        const reviews = await pool.query('INSERT INTO review (reviewerid, stocklistid, ownerid, review_text) VALUES ($1, $2, $3, $4) RETURNING *', [reviewerid, stocklistid, ownerid, review_text]);
+        const reviews = await pool.query(
+            'INSERT INTO review (reviewerid, stocklistid, ownerid, review_text) VALUES ($1, $2, $3, $4) RETURNING *'
+            , [reviewerid, stocklistid, ownerid, review_text]);
         res.status(200).json({response: "review added"});
     } catch (error) {
         console.error(error.message);
@@ -662,7 +672,9 @@ app.post('/addreview', async (req, res) => {
 app.put("/updateReview", async (req, res) => {
     try {
         const { reviewerid, stocklistid, ownerid, review_text } = req.body;
-        const updateReview = await pool.query("UPDATE review SET review_text = $4 WHERE reviewerid = $1 AND stocklistid = $2 AND ownerid =$3", [reviewerid, stocklistid, ownerid, review_text]);
+        const updateReview = await pool.query(
+            "UPDATE review SET review_text = $4 WHERE reviewerid = $1 AND stocklistid = $2 AND ownerid =$3"
+            , [reviewerid, stocklistid, ownerid, review_text]);
         res.json({response: "review updated"});
     } catch (error) {
         console.error(error.message);
@@ -673,7 +685,9 @@ app.put("/updateReview", async (req, res) => {
 app.delete('/reviews/:ownerid/:stocklistid/:reviewerid', async (req, res) => {
     try {
         const { ownerid, stocklistid, reviewerid } = req.params;
-        const deleteReview = await pool.query('DELETE FROM review WHERE ownerid = $1 AND stocklistid = $2 AND reviewerid = $3', [ownerid, stocklistid, reviewerid]);
+        const deleteReview = await pool.query(
+            'DELETE FROM review WHERE ownerid = $1 AND stocklistid = $2 AND reviewerid = $3'
+            , [ownerid, stocklistid, reviewerid]);
         res.json(deleteReview.rows);
     } catch (error) {
         console.error(error.message);
@@ -695,7 +709,10 @@ app.delete("/allreviews/:ownerid/:stocklistid", async (req, res) => {
 app.get("/myreview/:ownerid/:listid/:myid", async (req, res) => {
     try{
         const { ownerid, listid, myid } = req.params;
-        const getReview = await pool.query('select reviewerid, stocklistid, ownerid, review_text, username, profilepic_url from review join users on review.reviewerid = users.userid WHERE review.stocklistid = $2 and review.ownerid = $1 and review.reviewerid = $3;', [ownerid, listid, myid]);
+        const getReview = await pool.query(
+            'select reviewerid, stocklistid, ownerid, review_text, username, profilepic_url from review join users \
+            on review.reviewerid = users.userid WHERE review.stocklistid = $2 and review.ownerid = $1 and review.reviewerid = $3;'
+            , [ownerid, listid, myid]);
         res.json(getReview.rows);
     } catch (error) {
         console.error(error.message);
@@ -730,10 +747,12 @@ app.get("/myreview/:ownerid/:listid/:myid", async (req, res) => {
     app.get('/searchFriends/:username/:id', async (req, res) => {
         try {
             const { username, id } = req.params;
-            const user = await pool.query('SELECT * FROM users WHERE userid = (SELECT userid FROM users WHERE username = $1 AND userid != $2\
+            const user = await pool.query(
+                'SELECT * FROM users WHERE userid = (SELECT userid FROM users WHERE username = $1 AND userid != $2\
                 EXCEPT SELECT friendid FROM friends_list WHERE ownerID = $2 \
                 EXCEPT SELECT receiverid FROM friend_request WHERE senderid = $2\
-                EXCEPT SELECT senderid FROM friend_request WHERE receiverid = $2)', [username, id]);
+                EXCEPT SELECT senderid FROM friend_request WHERE receiverid = $2)'
+                , [username, id]);
             res.json(user.rows);
         } catch (error) {
             console.error(error.message);
@@ -744,7 +763,10 @@ app.get("/myreview/:ownerid/:listid/:myid", async (req, res) => {
     app.get('/searchShare/:username/:id', async (req, res) => {
         try {
             const { username, id } = req.params;
-            const user = await pool.query('SELECT * FROM users WHERE userid = (SELECT friendid FROM friends_list WHERE ownerid = $2 AND friendid = (SELECT userid FROM users WHERE username = $1))', [username, id]);
+            const user = await pool.query(
+                'SELECT * FROM users WHERE userid = (SELECT friendid FROM friends_list WHERE ownerid = $2 AND friendid \
+                 = (SELECT userid FROM users WHERE username = $1))'
+                 , [username, id]);
             res.json(user.rows);
         } catch (error) {
             console.error(error.message);
@@ -760,8 +782,12 @@ app.listen(5000, () => {
 app.get('/graphingWeek/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
-        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
-        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '7 DAYS' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        const timestamp = await pool.query(
+            "SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1"
+            , [symbol]);
+        const stock = await pool.query(
+            "SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '7 DAYS' AND symbol= $1"
+            , [symbol, timestamp.rows[0].timestamp]);
         res.json(stock.rows);
     } catch (error) {
         console.error(error.message);
@@ -771,8 +797,12 @@ app.get('/graphingWeek/:symbol', async (req, res) => {
 app.get('/graphingMonth/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
-        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
-        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '1 MONTH' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        const timestamp = await pool.query(
+            "SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1"
+            , [symbol]);
+        const stock = await pool.query(
+            "SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '1 MONTH' AND symbol= $1"
+            , [symbol, timestamp.rows[0].timestamp]);
         res.json(stock.rows);
     } catch (error) {
         console.error(error.message);
@@ -782,8 +812,12 @@ app.get('/graphingMonth/:symbol', async (req, res) => {
 app.get('/graphingQuarter/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
-        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
-        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '3 MONTHS' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        const timestamp = await pool.query(
+            "SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1"
+            , [symbol]);
+        const stock = await pool.query(
+            "SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '3 MONTHS' AND symbol= $1"
+            , [symbol, timestamp.rows[0].timestamp]);
         res.json(stock.rows);
     } catch (error) {
         console.error(error.message);
@@ -793,8 +827,12 @@ app.get('/graphingQuarter/:symbol', async (req, res) => {
 app.get('/graphingYear/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
-        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
-        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '1 YEAR' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        const timestamp = await pool.query(
+            "SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1"
+            , [symbol]);
+        const stock = await pool.query(
+            "SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '1 YEAR' AND symbol= $1"
+            , [symbol, timestamp.rows[0].timestamp]);
         res.json(stock.rows);
     } catch (error) {
         console.error(error.message);
@@ -804,8 +842,12 @@ app.get('/graphingYear/:symbol', async (req, res) => {
 app.get('/graphing5Years/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
-        const timestamp = await pool.query("SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1", [symbol]);
-        const stock = await pool.query("SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '5 YEARS' AND symbol= $1", [symbol, timestamp.rows[0].timestamp]);
+        const timestamp = await pool.query(
+            "SELECT timestamp FROM stocks WHERE symbol = $1 ORDER BY timestamp DESC LIMIT 1"
+            , [symbol]);
+        const stock = await pool.query(
+            "SELECT timestamp, close, symbol FROM stocks WHERE timestamp <= $2 AND timestamp >= $2 - INTERVAL '5 YEARS' AND symbol= $1"
+            , [symbol, timestamp.rows[0].timestamp]);
         res.json(stock.rows);
     } catch (error) {
         console.error(error.message);
@@ -817,8 +859,10 @@ app.get('/graphing5Years/:symbol', async (req, res) => {
 app.get('/statistics/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
-        const statistics = await pool.query("SELECT symbol,(STDDEV_POP(close) / AVG(close)) AS coefficient_of_variation FROM stocks \
-WHERE (timestamp BETWEEN (SELECT timestamp FROM stocks WHERE symbol = symbol ORDER BY timestamp ASC LIMIT 1) AND now()) AND symbol = $1 GROUP BY symbol", [symbol]);
+        const statistics = await pool.query(
+            "SELECT symbol,(STDDEV_POP(close) / AVG(close)) AS coefficient_of_variation FROM stocks WHERE (timestamp BETWEEN \
+            (SELECT timestamp FROM stocks WHERE symbol = symbol ORDER BY timestamp ASC LIMIT 1) AND now()) AND symbol = $1 GROUP BY symbol"
+            , [symbol]);
         res.json(statistics.rows[0]);
     } catch (error) {
         console.error(error.message);
@@ -829,8 +873,21 @@ WHERE (timestamp BETWEEN (SELECT timestamp FROM stocks WHERE symbol = symbol ORD
 app.get('/beta/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
-        const covariance = await pool.query("WITH returns AS (SELECT timestamp, symbol AS asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp))/ LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS asset_return FROM stocks WHERE symbol = $1 UNION ALL SELECT timestamp, 'MARKET' as asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) / LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS asset_return FROM stocks WHERE symbol IN (SELECT DISTINCT symbol FROM stocks)), mean_returns AS (SELECT asset_symbol, AVG(asset_return) AS mean_return FROM returns GROUP BY asset_symbol), returns_with_means AS (SELECT r.timestamp, r.asset_symbol, r.asset_return, m.mean_return AS mean_return FROM returns r JOIN mean_returns m ON r.asset_symbol = m.asset_symbol) SELECT SUM((r.asset_return - r.mean_return) * (m.asset_return - m.mean_return)) / (COUNT(*) - 1) AS covariance FROM returns_with_means r JOIN returns_with_means m ON r.timestamp = m.timestamp WHERE r.asset_symbol = $1 AND m.asset_symbol = 'MARKET'", [symbol])
-        const variance = await pool.query("WITH market_returns AS (SELECT timestamp, symbol AS asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp))/ LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS return FROM stocks WHERE symbol IN (SELECT DISTINCT symbol FROM stocks)), mean_market_return AS (SELECT AVG(return) AS mean_return FROM market_returns) SELECT SUM((return - m.mean_return) * (return - m.mean_return)) / (COUNT(*) - 1) AS variance FROM market_returns r JOIN mean_market_return m ON true");
+        const covariance = await pool.query(
+            "WITH returns AS (SELECT timestamp, symbol AS asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) \
+            / LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS asset_return FROM stocks WHERE symbol = $1 UNION ALL SELECT timestamp,\
+             'MARKET' as asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) / LAG(close) OVER (PARTITION BY symbol \
+             ORDER BY timestamp) AS asset_return FROM stocks WHERE symbol IN (SELECT DISTINCT symbol FROM stocks)), mean_returns AS (SELECT \
+              asset_symbol, AVG(asset_return) AS mean_return FROM returns GROUP BY asset_symbol), returns_with_means AS (SELECT r.timestamp, \
+              r.asset_symbol, r.asset_return, m.mean_return AS mean_return FROM returns r JOIN mean_returns m ON r.asset_symbol = m.asset_symbol)\
+               SELECT SUM((r.asset_return - r.mean_return) * (m.asset_return - m.mean_return)) / (COUNT(*) - 1) AS covariance FROM returns_with_means \
+               r JOIN returns_with_means m ON r.timestamp = m.timestamp WHERE r.asset_symbol = $1 AND m.asset_symbol = 'MARKET'"
+               , [symbol])
+        const variance = await pool.query(
+            "WITH market_returns AS (SELECT timestamp, symbol AS asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) \
+            / LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS return FROM stocks WHERE symbol IN (SELECT DISTINCT symbol FROM stocks)), \
+             mean_market_return AS (SELECT AVG(return) AS mean_return FROM market_returns) SELECT SUM((return - m.mean_return) * (return - m.mean_return))\
+              / (COUNT(*) - 1) AS variance FROM market_returns r JOIN mean_market_return m ON true");
         res.json(covariance.rows[0].covariance / variance.rows[0].variance);
     } catch (error) {
         console.error(error.message);
@@ -841,7 +898,15 @@ app.get('/beta/:symbol', async (req, res) => {
 app.get('/cov/:s1/:s2', async (req, res) => {
     try {
         const { s1, s2 } = req.params;
-        const cov = await pool.query("WITH returns AS (SELECT timestamp, symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp))/ LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS daily_return FROM stocks WHERE symbol IN ($1, $2)), mean_returns AS (SELECT symbol, AVG(daily_return) AS mean_return FROM returns GROUP BY symbol), returns_with_means AS (SELECT r.timestamp, r.symbol, r.daily_return, m.mean_return FROM returns r JOIN mean_returns m ON r.symbol = m.symbol) SELECT SUM((r1.daily_return - m1.mean_return) * (r2.daily_return - m2.mean_return)) / (COUNT(*) - 1) AS covariance FROM returns_with_means r1 JOIN returns_with_means r2 ON r1.timestamp = r2.timestamp JOIN mean_returns m1 ON r1.symbol = m1.symbol JOIN mean_returns m2 ON r2.symbol = m2.symbol WHERE r1.symbol = $1 AND r2.symbol = $2", [s1, s2]);
+        const cov = await pool.query(
+            "WITH returns AS (SELECT timestamp, symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) \
+            / LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS daily_return FROM stocks WHERE symbol IN ($1, $2)),\
+             mean_returns AS (SELECT symbol, AVG(daily_return) AS mean_return FROM returns GROUP BY symbol), returns_with_means \
+             AS (SELECT r.timestamp, r.symbol, r.daily_return, m.mean_return FROM returns r JOIN mean_returns m ON r.symbol = m.symbol)\
+              SELECT SUM((r1.daily_return - m1.mean_return) * (r2.daily_return - m2.mean_return)) / (COUNT(*) - 1) AS covariance FROM \
+              returns_with_means r1 JOIN returns_with_means r2 ON r1.timestamp = r2.timestamp JOIN mean_returns m1 ON r1.symbol = m1.symbol \
+              JOIN mean_returns m2 ON r2.symbol = m2.symbol WHERE r1.symbol = $1 AND r2.symbol = $2"
+              , [s1, s2]);
         res.json(cov.rows[0].covariance);
     } catch (error) {
         console.error(error.message);
@@ -852,7 +917,17 @@ app.get('/cov/:s1/:s2', async (req, res) => {
 app.get('/corr/:s1/:s2', async (req, res) => {
     try {
         const { s1, s2 } = req.params;
-        const corr = await pool.query("WITH returns AS (SELECT timestamp, symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp))/ LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS daily_return FROM stocks WHERE symbol IN ($1, $2)), mean_returns AS (SELECT symbol, AVG(daily_return) AS mean_return FROM returns GROUP BY symbol), returns_with_means AS (SELECT r1.timestamp, r1.daily_return AS return1, r2.daily_return AS return2, m1.mean_return AS mean_return1, m2.mean_return AS mean_return2 FROM returns r1 JOIN returns r2 ON r1.timestamp = r2.timestamp JOIN mean_returns m1 ON r1.symbol = m1.symbol JOIN mean_returns m2 ON r2.symbol = m2.symbol WHERE r1.symbol = $1 AND r2.symbol = $2), covariance AS (SELECT SUM((return1 - mean_return1) * (return2 - mean_return2)) / (COUNT(*) - 1) AS covar FROM returns_with_means), stddevs AS (SELECT SQRT(SUM((return1 - mean_return1) * (return1 - mean_return1)) / (COUNT(*) - 1)) AS stddev1, SQRT(SUM((return2 - mean_return2) * (return2 - mean_return2)) / (COUNT(*) - 1)) AS stddev2 FROM returns_with_means) SELECT c.covar / (s.stddev1 * s.stddev2) AS correlation FROM covariance c, stddevs s", [s1, s2]);
+        const corr = await pool.query(
+            "WITH returns AS (SELECT timestamp, symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp))/ LAG(close) \
+             OVER (PARTITION BY symbol ORDER BY timestamp) AS daily_return FROM stocks WHERE symbol IN ($1, $2)), mean_returns AS (SELECT \
+             symbol, AVG(daily_return) AS mean_return FROM returns GROUP BY symbol), returns_with_means AS (SELECT r1.timestamp, r1.daily_return \
+             AS return1, r2.daily_return AS return2, m1.mean_return AS mean_return1, m2.mean_return AS mean_return2 FROM returns r1 JOIN returns r2 \
+             ON r1.timestamp = r2.timestamp JOIN mean_returns m1 ON r1.symbol = m1.symbol JOIN mean_returns m2 ON r2.symbol = m2.symbol WHERE \
+             r1.symbol = $1 AND r2.symbol = $2), covariance AS (SELECT SUM((return1 - mean_return1) * (return2 - mean_return2)) / (COUNT(*) - 1) \
+             AS covar FROM returns_with_means), stddevs AS (SELECT SQRT(SUM((return1 - mean_return1) * (return1 - mean_return1)) / (COUNT(*) - 1)) \
+             AS stddev1, SQRT(SUM((return2 - mean_return2) * (return2 - mean_return2)) / (COUNT(*) - 1)) AS stddev2 FROM returns_with_means) SELECT \
+             c.covar / (s.stddev1 * s.stddev2) AS correlation FROM covariance c, stddevs s"
+             , [s1, s2]);
         res.json(corr.rows[0].correlation);
     } catch (error) {
         console.error(error.message);
