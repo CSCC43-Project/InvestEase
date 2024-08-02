@@ -912,18 +912,18 @@ app.get('/beta/:symbol', async (req, res) => {
         const covariance = await pool.query(
             "WITH returns AS (SELECT timestamp, symbol AS asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) \
             / LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS asset_return FROM stocks WHERE symbol = $1 UNION ALL SELECT timestamp,\
-             'MARKET' as asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) / LAG(close) OVER (PARTITION BY symbol \
-             ORDER BY timestamp) AS asset_return FROM stocks WHERE symbol IN (SELECT DISTINCT symbol FROM stocks)), mean_returns AS (SELECT \
-              asset_symbol, AVG(asset_return) AS mean_return FROM returns GROUP BY asset_symbol), returns_with_means AS (SELECT r.timestamp, \
-              r.asset_symbol, r.asset_return, m.mean_return AS mean_return FROM returns r JOIN mean_returns m ON r.asset_symbol = m.asset_symbol)\
+            'MARKET' as asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) / LAG(close) OVER (PARTITION BY symbol \
+            ORDER BY timestamp) AS asset_return FROM stocks WHERE symbol IN (SELECT DISTINCT symbol FROM stocks)), mean_returns AS (SELECT \
+            asset_symbol, AVG(asset_return) AS mean_return FROM returns GROUP BY asset_symbol), returns_with_means AS (SELECT r.timestamp, \
+            r.asset_symbol, r.asset_return, m.mean_return AS mean_return FROM returns r JOIN mean_returns m ON r.asset_symbol = m.asset_symbol)\
                SELECT SUM((r.asset_return - r.mean_return) * (m.asset_return - m.mean_return)) / (COUNT(*) - 1) AS covariance FROM returns_with_means \
-               r JOIN returns_with_means m ON r.timestamp = m.timestamp WHERE r.asset_symbol = $1 AND m.asset_symbol = 'MARKET'"
-               , [symbol])
+            r JOIN returns_with_means m ON r.timestamp = m.timestamp WHERE r.asset_symbol = $1 AND m.asset_symbol = 'MARKET'"
+            , [symbol])
         const variance = await pool.query(
-            "WITH market_returns AS (SELECT timestamp, symbol AS asset_symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) \
+            "WITH market_returns AS (SELECT timestamp, symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) \
             / LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS return FROM stocks WHERE symbol IN (SELECT DISTINCT symbol FROM stocks)), \
              mean_market_return AS (SELECT AVG(return) AS mean_return FROM market_returns) SELECT SUM((return - m.mean_return) * (return - m.mean_return))\
-              / (COUNT(*) - 1) AS variance FROM market_returns r JOIN mean_market_return m ON true");
+            / (COUNT(*) - 1) AS variance FROM market_returns r JOIN mean_market_return m ON true");
         res.json(covariance.rows[0].covariance / variance.rows[0].variance);
     } catch (error) {
         console.error(error.message);
@@ -937,12 +937,12 @@ app.get('/cov/:s1/:s2', async (req, res) => {
         const cov = await pool.query(
             "WITH returns AS (SELECT timestamp, symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp)) \
             / LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp) AS daily_return FROM stocks WHERE symbol IN ($1, $2)),\
-             mean_returns AS (SELECT symbol, AVG(daily_return) AS mean_return FROM returns GROUP BY symbol), returns_with_means \
-             AS (SELECT r.timestamp, r.symbol, r.daily_return, m.mean_return FROM returns r JOIN mean_returns m ON r.symbol = m.symbol)\
-              SELECT SUM((r1.daily_return - m1.mean_return) * (r2.daily_return - m2.mean_return)) / (COUNT(*) - 1) AS covariance FROM \
-              returns_with_means r1 JOIN returns_with_means r2 ON r1.timestamp = r2.timestamp JOIN mean_returns m1 ON r1.symbol = m1.symbol \
-              JOIN mean_returns m2 ON r2.symbol = m2.symbol WHERE r1.symbol = $1 AND r2.symbol = $2"
-              , [s1, s2]);
+            mean_returns AS (SELECT symbol, AVG(daily_return) AS mean_return FROM returns GROUP BY symbol), returns_with_means \
+            AS (SELECT r.timestamp, r.symbol, r.daily_return, m.mean_return FROM returns r JOIN mean_returns m ON r.symbol = m.symbol)\
+            SELECT SUM((r1.daily_return - m1.mean_return) * (r2.daily_return - m2.mean_return)) / (COUNT(*) - 1) AS covariance FROM \
+            returns_with_means r1 JOIN returns_with_means r2 ON r1.timestamp = r2.timestamp JOIN mean_returns m1 ON r1.symbol = m1.symbol \
+            JOIN mean_returns m2 ON r2.symbol = m2.symbol WHERE r1.symbol = $1 AND r2.symbol = $2"
+            , [s1, s2]);
         res.json(cov.rows[0].covariance);
     } catch (error) {
         console.error(error.message);
@@ -955,15 +955,15 @@ app.get('/corr/:s1/:s2', async (req, res) => {
         const { s1, s2 } = req.params;
         const corr = await pool.query(
             "WITH returns AS (SELECT timestamp, symbol, (close - LAG(close) OVER (PARTITION BY symbol ORDER BY timestamp))/ LAG(close) \
-             OVER (PARTITION BY symbol ORDER BY timestamp) AS daily_return FROM stocks WHERE symbol IN ($1, $2)), mean_returns AS (SELECT \
-             symbol, AVG(daily_return) AS mean_return FROM returns GROUP BY symbol), returns_with_means AS (SELECT r1.timestamp, r1.daily_return \
-             AS return1, r2.daily_return AS return2, m1.mean_return AS mean_return1, m2.mean_return AS mean_return2 FROM returns r1 JOIN returns r2 \
-             ON r1.timestamp = r2.timestamp JOIN mean_returns m1 ON r1.symbol = m1.symbol JOIN mean_returns m2 ON r2.symbol = m2.symbol WHERE \
+            OVER (PARTITION BY symbol ORDER BY timestamp) AS daily_return FROM stocks WHERE symbol IN ($1, $2)), mean_returns AS (SELECT \
+            symbol, AVG(daily_return) AS mean_return FROM returns GROUP BY symbol), returns_with_means AS (SELECT r1.timestamp, r1.daily_return \
+            AS return1, r2.daily_return AS return2, m1.mean_return AS mean_return1, m2.mean_return AS mean_return2 FROM returns r1 JOIN returns r2 \
+            ON r1.timestamp = r2.timestamp JOIN mean_returns m1 ON r1.symbol = m1.symbol JOIN mean_returns m2 ON r2.symbol = m2.symbol WHERE \
              r1.symbol = $1 AND r2.symbol = $2), covariance AS (SELECT SUM((return1 - mean_return1) * (return2 - mean_return2)) / (COUNT(*) - 1) \
              AS covar FROM returns_with_means), stddevs AS (SELECT SQRT(SUM((return1 - mean_return1) * (return1 - mean_return1)) / (COUNT(*) - 1)) \
              AS stddev1, SQRT(SUM((return2 - mean_return2) * (return2 - mean_return2)) / (COUNT(*) - 1)) AS stddev2 FROM returns_with_means) SELECT \
              c.covar / (s.stddev1 * s.stddev2) AS correlation FROM covariance c, stddevs s"
-             , [s1, s2]);
+            , [s1, s2]);
         res.json(corr.rows[0].correlation);
     } catch (error) {
         console.error(error.message);
