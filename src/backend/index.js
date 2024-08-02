@@ -208,7 +208,7 @@ app.post('/checkLogin', async (req, res) => {
             const friends = await pool.query("(SELECT userid FROM users WHERE userid != $1 \
                 EXCEPT SELECT friendid FROM friends_list WHERE ownerID = $1 \
                 EXCEPT SELECT receiverid FROM friend_request WHERE senderid = $1\
-                EXCEPT SELECT senderid FROM friend_request WHERE request_status = 'rej')", [id]);
+                EXCEPT SELECT senderid FROM friend_request WHERE receiverid = $1)", [id]);
             res.json(friends.rows);
         } catch (error) {
             console.error(error.message);
@@ -730,7 +730,10 @@ app.get("/myreview/:ownerid/:listid/:myid", async (req, res) => {
     app.get('/searchFriends/:username/:id', async (req, res) => {
         try {
             const { username, id } = req.params;
-            const user = await pool.query('SELECT * FROM users WHERE userid = (SELECT userid FROM users WHERE username = $1 EXCEPT SELECT friendid FROM friends_list where ownerid = $2)', [username, id]);
+            const user = await pool.query('SELECT * FROM users WHERE userid = (SELECT userid FROM users WHERE username = $1 AND userid != $2\
+                EXCEPT SELECT friendid FROM friends_list WHERE ownerID = $2 \
+                EXCEPT SELECT receiverid FROM friend_request WHERE senderid = $2\
+                EXCEPT SELECT senderid FROM friend_request WHERE receiverid = $2)', [username, id]);
             res.json(user.rows);
         } catch (error) {
             console.error(error.message);
