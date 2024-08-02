@@ -16,9 +16,9 @@ export default function StockHolding({ stock, cashAccount, openAnalytics, stockS
         setCost((tempAmount + 1) * latestStockPrice);
     }
     function sell() {
-        if(amount != 0) {
-            setTempAmount(tempAmount - 1);
+        if(amount > 0) {
             setAmount(amount - 1);
+            setTempAmount(tempAmount - 1);
             setCost((tempAmount - 1) * latestStockPrice);
         }
     }
