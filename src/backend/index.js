@@ -653,11 +653,12 @@ app.post("stocklistitem/:stocklistid/:ownerid", async (req, res) => {
 app.get('/sharedstocklist/:stocklistid/:ownerid', async (req, res) => {
     try {
         const { stocklistid, ownerid } = req.params;
-        const sharedStockList = await pool.query(
-            "SELECT * FROM users WHERE userid = (SELECT friendid FROM friends_list WHERE ownerid = $2 AND status = 'mut' \
-            EXCEPT SELECT shared_userid FROM shared_stock_list WHERE stocklistid = $1 AND ownerid = $2)"
+        const friendids = await pool.query(
+            "SELECT friendid FROM friends_list WHERE ownerid = $2 AND status = 'mut' \
+            EXCEPT SELECT shared_userid FROM shared_stock_list WHERE stocklistid = $1 AND ownerid = $2"
             , [stocklistid, ownerid]);
-        res.json(sharedStockList.rows);
+        const getFriends = await pool.query("SELECT * FROM users WHERE userid = ANY($1)", [friendids.rows.map(friend => friend.friendid)]);
+        res.json(getFriends.rows);
     } catch (error) {
         console.error(error.message);
     }
