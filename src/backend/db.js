@@ -2,10 +2,15 @@ const Pool = require('pg').Pool;
 
 const pool = new Pool({
     user: 'postgres',
-    password: 'postgres',
-    host: '34.130.101.124',
+    password: '*password*',
+    host: 'localhost',
     port: 5432,
-    database: 'mydb'
+    database: 'investease'
 });
 
 module.exports = pool;
+
+// follow queries in init.sql
+// psql -h localhost -U postgres -d investease
+// cd .../InvestEase/ nodemon index
+// cd .../backend/ nodemon index
