@@ -7,6 +7,10 @@ const pool = require('./db');
 app.use(cors());
 app.use(express.json());
 
+app.listen(5000, () => {
+    console.log('Server is running on port 5000');
+});
+
 // ! REGISTER PAGE
 // SELECT * FROM users;
 // SELECT email FROM users WHERE email = $1
@@ -809,10 +813,6 @@ app.get("/myreview/:ownerid/:listid/:myid", async (req, res) => {
             console.error(error.message);
         }
     });
-
-app.listen(5000, () => {
-    console.log('Server is running on port 5000');
-});
 
 // ! GRAPHING
 // ? Graph for a specific stock for the last week
